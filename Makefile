@@ -19,6 +19,7 @@ kernel.bin: boot.o kernel.o
 
 iso: kernel.bin
 	grub-mkrescue -o zOS.iso isodir
+	cp kernel.bin isodir/boot/
 
 run: iso
 	qemu-system-i386 -cdrom zOS.iso
@@ -27,7 +28,7 @@ clean:
 	rm -f *.o kernel.bin
 
 fclean: clean
-	rm -rf isodir zOS.iso
+	rm -rf zOS.iso
 
 re: fclean all
 

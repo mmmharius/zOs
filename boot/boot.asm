@@ -24,3 +24,4 @@ _start:
     cli                     ; disable interrupts (no handlers yet)
     call kernel_main        ; jump to C code
     hlt                     ; halt CPU if kernel_main returns
+    jmp _start              ; an infinite loop so we can see the result
