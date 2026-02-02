@@ -31,8 +31,6 @@ void    print_42() {
     [0xB8001] = 0x0F  // high byte attribute
 */
 
-
-
 void main() {
     print_42();
 }

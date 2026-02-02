@@ -3,7 +3,7 @@ CC      = gcc
 LD      = ld
 
 ASMFLAGS = -f elf32
-CFLAGS   = -m32 -fno-builtin -fno-exceptions -fno-stack-protector -nostdlib -nodefaultlibs -Iinclude
+CFLAGS   = -m32 -fno-builtin -fno-stack-protector -nostdlib -nodefaultlibs -Iinclude
 LDFLAGS  = -m elf_i386 -T linker.ld
 
 OBJDIR = obj
