@@ -6,21 +6,26 @@ ASMFLAGS = -f elf32
 CFLAGS   = -m32 -fno-builtin -fno-stack-protector -nostdlib -nodefaultlibs -Iinclude
 LDFLAGS  = -m elf_i386 -T linker.ld
 
-OBJDIR = obj
+OBJ_DIR = obj
+LIBASM_DIR = kernel/libasm
+LIBASM = $(LIBASM_DIR)/libasm.a
 
 all: kernel.bin
 
-$(OBJDIR):
-	mkdir -p $(OBJDIR)
+$(OBJ_DIR):
+	mkdir -p $(OBJ_DIR)
 
-$(OBJDIR)/boot.o: boot/boot.asm | $(OBJDIR)
+$(OBJ_DIR)/boot.o: boot/boot.asm | $(OBJ_DIR)
 	$(ASM) $(ASMFLAGS) $< -o $@
 
-$(OBJDIR)/kernel.o: src/kernel.c | $(OBJDIR)
+$(OBJ_DIR)/kernel.o: kernel/kernel.c | $(OBJ_DIR)
 	$(CC) $(CFLAGS) -c $< -o $@
 
-kernel.bin: $(OBJDIR)/boot.o $(OBJDIR)/kernel.o
-	$(LD) $(LDFLAGS) -o $@ $(OBJDIR)/boot.o $(OBJDIR)/kernel.o
+$(LIBASM):
+	$(MAKE) -C $(LIBASM_DIR)
+
+kernel.bin: $(OBJ_DIR)/boot.o $(OBJ_DIR)/kernel.o $(LIBASM)
+	$(LD) $(LDFLAGS) -o $@ $(OBJ_DIR)/boot.o $(OBJ_DIR)/kernel.o $(LIBASM)
 
 iso: kernel.bin
 	mv kernel.bin isodir/boot/
@@ -30,11 +35,13 @@ run: iso
 	qemu-system-i386 -cdrom zOS.iso
 
 clean:
-	rm -rf $(OBJDIR)
+	rm -rf $(OBJ_DIR)
 	rm -f isodir/boot/kernel.bin
+	$(MAKE) -C $(LIBASM_DIR) clean
 
 fclean: clean
 	rm -f zOS.iso
+	$(MAKE) -C $(LIBASM_DIR) fclean
 
 re: fclean all
 

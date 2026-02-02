@@ -1,7 +1,8 @@
 #include "kernel.h"
+#include "libasm/libasm.h"
 
 void    print_42() {
-    volatile uint16_t* vga = (uint16_t*)0xB8000; //0xB8000 -> VGA TEXT mode video memory address
+    volatile uint16_t* vga = (uint16_t*)0xB8000; // 0xB8000 -> VGA TEXT mode video memory address
 
     vga[0] = (uint16_t)'4' | 0x0F00;  // each vga[i] is 2 bytes = 16 bits
     vga[1] = (uint16_t)'2' | 0x0F00;
