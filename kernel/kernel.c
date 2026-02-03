@@ -1,7 +1,7 @@
 #include "kernel.h"
+#include "io.h"
 #include "keyboard.h"
-#include "libasm/libasm.h"
-#include <sys/io.h>
+#include "stdint.h"
 
 int COL = 0;
 int LIN = 0;
@@ -19,6 +19,7 @@ unsigned char read_keyboard() {
     while ((inb(KB_STATUS) & 1) == 0);
         return inb(KB_DATA);
 }
+
 
 char scancode_to_ascii(unsigned char sc) {
     switch(sc) {
@@ -75,7 +76,13 @@ void keyboard_loop() {
 
 
 
-/*
+
+void main() {
+    // print_42();
+    keyboard_loop();
+}
+
+/* 
     vga[0] = (uint16_t)'4' | 0x0F00
 
     (uint16_t)'4' in ASCII  = 0x0034
@@ -98,8 +105,3 @@ void keyboard_loop() {
     [0xB8000] = 0x34  // low byte character 
     [0xB8001] = 0x0F  // high byte attribute
 */
-
-void main() {
-    // print_42();
-    keyboard_loop();
-}
