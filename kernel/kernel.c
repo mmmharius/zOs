@@ -6,14 +6,13 @@
 int COL = 0;
 int ROW = 0;
 
-
-
-void    main() {
+int    main() {
     // print_42();
     int c = 12;
-    ft_printk("Hello from ft_kprintf!\n");
-    ft_printk("Teste : %d", c);
+    ft_printk(1, "Hello from ft_kprintf!\nHello from ft_kprintf!\nHello from ft_kprintf!\nHello from ft_kprintf!\n");
+    ft_printk(0, "Teste : %d", c);
     move_cursor();
     keyboard_loop();
     while(1);
+    return 1;
 }

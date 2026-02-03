@@ -3,7 +3,7 @@ CC      = gcc
 LD      = ld
 
 ASMFLAGS = -f elf32
-CFLAGS   = -m32 -fno-builtin -fno-stack-protector -nostdlib -nodefaultlibs -Iinclude -Iinclude/ft_printk/includes
+CFLAGS   = -Wall -Wextra -Werror -m32 -fno-builtin -fno-stack-protector -nostdlib -nodefaultlibs -Iinclude -Iinclude/ft_printk/includes
 LDFLAGS  = -m elf_i386 -T linker.ld
 
 OBJ_DIR = obj
@@ -42,7 +42,7 @@ iso: kernel.bin
 	grub-mkrescue -o zOS.iso isodir
 
 run: iso
-	qemu-system-i386 -cdrom zOS.iso
+	qemu-system-i386 -cdrom zOS.iso -serial stdio
 
 clean:
 	rm -rf $(OBJ_DIR)
