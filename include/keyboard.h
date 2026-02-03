@@ -1,6 +1,9 @@
 #ifndef KEYBOARD_H
 #define KEYBOARD_H
 
+extern int ROW;
+extern int COL;
+
 #define KB_DATA 0x60
 #define KB_STATUS 0x64
 
@@ -32,5 +35,7 @@
 #define KEY_B 0x30
 #define KEY_N 0x31
 #define KEY_M 0x32
+
+char    scancode_to_ascii(unsigned char sc);
 
 #endif

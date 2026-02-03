@@ -7,25 +7,29 @@ CFLAGS   = -m32 -fno-builtin -fno-stack-protector -nostdlib -nodefaultlibs -Iinc
 LDFLAGS  = -m elf_i386 -T linker.ld
 
 OBJ_DIR = obj
-LIBASM_DIR = kernel/libasm
+LIBASM_DIR = include/libasm
 LIBASM = $(LIBASM_DIR)/libasm.a
+
+SRCS = kernel/kernel.c kernel/keyboard.c
+OBJS = $(patsubst %.c,$(OBJ_DIR)/%.o,$(SRCS))
 
 all: kernel.bin
 
 $(OBJ_DIR):
-	mkdir -p $(OBJ_DIR)
+	mkdir -p $(OBJ_DIR)/kernel
 
 $(OBJ_DIR)/boot.o: boot/boot.asm | $(OBJ_DIR)
 	$(ASM) $(ASMFLAGS) $< -o $@
 
-$(OBJ_DIR)/kernel.o: kernel/kernel.c | $(OBJ_DIR)
+$(OBJ_DIR)/%.o: %.c | $(OBJ_DIR)
+	mkdir -p $(dir $@)
 	$(CC) $(CFLAGS) -c $< -o $@
 
 $(LIBASM):
 	$(MAKE) -C $(LIBASM_DIR)
 
-kernel.bin: $(OBJ_DIR)/boot.o $(OBJ_DIR)/kernel.o $(LIBASM)
-	$(LD) $(LDFLAGS) -o $@ $(OBJ_DIR)/boot.o $(OBJ_DIR)/kernel.o $(LIBASM)
+kernel.bin: $(OBJ_DIR)/boot.o $(OBJS) $(LIBASM)
+	$(LD) $(LDFLAGS) -o $@ $(OBJ_DIR)/boot.o $(OBJS) $(LIBASM)
 
 iso: kernel.bin
 	mv kernel.bin isodir/boot/
