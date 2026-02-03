@@ -20,7 +20,7 @@ void    scroll() {
     printk(1, "SCROLL CALL");
     volatile uint16_t *vga = (uint16_t *)VGA_ADDR;
 
-    for (int row = 1; row < VGA_HEIGHT; row++) {
+    for (int row = START_PRINT + 1; row < VGA_HEIGHT; row++) {
         for (int col = 0; col < VGA_WIDTH; col++) {
             vga[(row - 1) * VGA_WIDTH + col] = vga[row * VGA_WIDTH + col];
         }

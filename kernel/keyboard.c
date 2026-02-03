@@ -50,7 +50,7 @@ void handle_backspace() {
         COL--;
         vga[ROW * VGA_WIDTH + COL] = ' ' | VGA_COLOR;
     } 
-    else if (ROW > 0) {
+    else if (ROW > START_PRINT) {
         ROW--;
         COL = 0;
         for (int col = 79; col >= 0; col--) {
