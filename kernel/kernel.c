@@ -4,24 +4,32 @@
 #include "stdint.h"
 
 int COL = 0;
-int LIN = 0;
+int ROW = 0;
 
-void    print_42() {
-    volatile uint16_t* vga = (uint16_t*)0xB8000; // 0xB8000 -> VGA TEXT mode video memory address
-
-    vga[LIN + COL * 80] = (uint16_t)'4' | 0x0F00;  // each vga[i] is 2 bytes = 16 bits
-    LIN++;
-    vga[LIN + COL * 80] = (uint16_t)'2' | 0x0F00;
-    LIN++;
-}
 
 unsigned char read_keyboard() {
     while ((inb(KB_STATUS) & 1) == 0);
-        return inb(KB_DATA);
+    return inb(KB_DATA);
+}
+
+void move_cursor()
+{
+    uint16_t pos = ROW * 80 + COL;
+    
+    outb(0x3D4, 0x0F); // 0x0F  = cursor low byte
+    // 0x3D4 = choose register | 
+    outb(0x3D5, (uint8_t)(pos & 0xFF)); 
+    outb(0x3D4, 0x0E);  // 0x0E  = cursor high byte
+    outb(0x3D5, (uint8_t)((pos >> 8) & 0xFF));
 }
 
 
-char scancode_to_ascii(unsigned char sc) {
+void    print_42() {
+    print_char('4');
+    print_char('2');
+}
+
+char    scancode_to_ascii(unsigned char sc) {
     switch(sc) {
         case KEY_Q: return 'Q';
         case KEY_W: return 'W';
@@ -56,20 +64,28 @@ char scancode_to_ascii(unsigned char sc) {
 }
 
 void    print_char(char c) {
-    volatile uint16_t* vga = (uint16_t*)0xB8000;
-    if (LIN == 80) {
-        COL++;
-        LIN = 0;
+    volatile uint16_t* vga = (uint16_t*)0xB8000; // 0xB8000 -> VGA TEXT mode video memory address
+    if (COL == 80) {
+        ROW++;
+        COL = 0;
     }
-    vga[LIN + COL * 80] = (uint16_t)c | 0x0F00;
-    LIN++;
+    vga[COL + ROW * 80] = (uint16_t)c | 0x0F00;
+    COL++;
+    move_cursor();
 }
 
-void keyboard_loop() {
+void    print_keyboard(char c) {
+
+}
+
+void    keyboard_loop() {
     while(1) {
         unsigned char sc = read_keyboard();
+        if (sc & 0x80)      // keyboard relased catch
+            continue;
         char c = scancode_to_ascii(sc);
         print_char(c);
+        // print_keyboard(c);
     }
 }
 
@@ -77,8 +93,8 @@ void keyboard_loop() {
 
 
 
-void main() {
-    // print_42();
+void    main() {
+    print_42();
     keyboard_loop();
 }
 
