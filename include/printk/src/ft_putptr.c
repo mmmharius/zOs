@@ -1,4 +1,4 @@
-#include "ft_printk.h"
+#include "printk.h"
 
 int ft_putptr(uint32_t addr, int output) {
     int nb_caracter = 0;

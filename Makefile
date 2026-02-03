@@ -3,7 +3,7 @@ CC      = gcc
 LD      = ld
 
 ASMFLAGS = -f elf32
-CFLAGS   = -Wall -Wextra -Werror -m32 -fno-builtin -fno-stack-protector -nostdlib -nodefaultlibs -Iinclude -Iinclude/ft_printk/includes
+CFLAGS   = -Wall -Wextra -Werror -m32 -fno-builtin -fno-stack-protector -nostdlib -nodefaultlibs -Iinclude -Iinclude/printk/includes
 LDFLAGS  = -m elf_i386 -T linker.ld
 
 OBJ_DIR = obj
@@ -13,13 +13,13 @@ LIBASM = $(LIBASM_DIR)/libasm.a
 SRCS = kernel/kernel.c kernel/keyboard.c kernel/screen.c
 OBJS = $(patsubst %.c,$(OBJ_DIR)/%.o,$(SRCS))
 
-FT_PRINTK_DIR = include/ft_printk
-FT_PRINTK_LIB = $(FT_PRINTK_DIR)/ft_printk.a
+PRINTK_DIR = include/printk
+PRINTK_LIB = $(PRINTK_DIR)/printk.a
 
 all: kernel.bin
 
-$(FT_PRINTK_LIB): FORCE
-	$(MAKE) -C $(FT_PRINTK_DIR)
+$(PRINTK_LIB): FORCE
+	$(MAKE) -C $(PRINTK_DIR)
 
 $(OBJ_DIR):
 	mkdir -p $(OBJ_DIR)/kernel
@@ -34,8 +34,8 @@ $(OBJ_DIR)/%.o: %.c | $(OBJ_DIR)
 $(LIBASM): FORCE
 	$(MAKE) -C $(LIBASM_DIR)
 
-kernel.bin: $(OBJ_DIR)/boot.o $(OBJS) $(FT_PRINTK_LIB) $(LIBASM)
-	$(LD) $(LDFLAGS) -o $@ $(OBJ_DIR)/boot.o $(OBJS) $(FT_PRINTK_LIB) $(LIBASM)
+kernel.bin: $(OBJ_DIR)/boot.o $(OBJS) $(PRINTK_LIB) $(LIBASM)
+	$(LD) $(LDFLAGS) -o $@ $(OBJ_DIR)/boot.o $(OBJS) $(PRINTK_LIB) $(LIBASM)
 
 iso: kernel.bin
 	mv kernel.bin isodir/boot/
@@ -48,12 +48,12 @@ clean:
 	rm -rf $(OBJ_DIR)
 	rm -f isodir/boot/kernel.bin
 	$(MAKE) -C $(LIBASM_DIR) clean
-	$(MAKE) -C $(FT_PRINTK_DIR) clean
+	$(MAKE) -C $(PRINTK_DIR) clean
 
 fclean: clean
 	rm -f kernel.bin zOS.iso
 	$(MAKE) -C $(LIBASM_DIR) fclean
-	$(MAKE) -C $(FT_PRINTK_DIR) fclean
+	$(MAKE) -C $(PRINTK_DIR) fclean
 
 re: fclean all
 

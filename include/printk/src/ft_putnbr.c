@@ -1,4 +1,4 @@
-#include "ft_printk.h"
+#include "printk.h"
 
 int	ft_putnbr(int n, int output) {
 	int	nb_caracter = 0;

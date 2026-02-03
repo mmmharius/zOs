@@ -1,4 +1,4 @@
-#include "ft_printk.h"
+#include "printk.h"
 #include "../../screen.h"
 #include "../../io.h"
 
@@ -77,7 +77,7 @@ int	ft_formats(uint32_t* args, const char format, int output) {
 	return nb_caracter;
 }
 
-int	ft_printk(int output, const char *str, ...) {
+int	printk(int output, const char *str, ...) {
 	uint32_t* args = (uint32_t*)(&str + 1);
 	int nb_caracter = 0;
 

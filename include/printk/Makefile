@@ -1,7 +1,7 @@
-NAME = ft_printk.a
+NAME = printk.a
 CC = gcc
 CFLAGS = -m32 -Wall -Wextra -Werror -fno-builtin -fno-stack-protector -nostdlib -nodefaultlibs
-SRC = src/ft_printk.c src/ft_puthex.c src/ft_putnbr.c src/ft_putnsigned.c src/ft_putptr.c
+SRC = src/printk.c src/ft_puthex.c src/ft_putnbr.c src/ft_putnsigned.c src/ft_putptr.c
 OBJ_DIR = obj
 OBJ = $(patsubst src/%.c,$(OBJ_DIR)/%.o,$(SRC))
 INCLUDE = -Iincludes

@@ -2,7 +2,7 @@
 #include "screen.h"
 #include "stdint.h"
 #include "io.h"
-#include "ft_printk.h"
+#include "printk.h"
 
 unsigned char read_keyboard() {
     while ((inb(KB_STATUS) & 1) == 0);
@@ -44,17 +44,17 @@ char    scancode_to_ascii(unsigned char sc) {
 }
 
 void handle_backspace() {
-    volatile uint16_t* vga = (uint16_t*)0xB8000;
+    volatile uint16_t* vga = (uint16_t*)VGA_ADDR;
 
     if (COL > 0) {
         COL--;
-        vga[ROW * 80 + COL] = ' ' | 0x0F00;
+        vga[ROW * VGA_WIDTH + COL] = ' ' | VGA_COLOR;
     } 
     else if (ROW > 0) {
         ROW--;
         COL = 0;
         for (int col = 79; col >= 0; col--) {
-            char ch = vga[ROW * 80 + col] & 0x00FF;
+            char ch = vga[ROW * VGA_WIDTH + col] & 0x00FF;
             if (ch != ' ' && ch != 0) {
                 COL = col + 1;
                 break;
@@ -68,6 +68,10 @@ void    print_keyboard(char c) {
     if (c == '\n') {
         COL = 0;
         ROW++;
+        printk(1, "ROW before space : %d\n", ROW);
+        check_col();
+        move_cursor();
+        printk(1, "ROW adter space : %d\n", ROW);
     }
     else if (c == '\b') {
         handle_backspace();
