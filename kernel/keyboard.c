@@ -1,4 +1,12 @@
-#include "keyboard.h" 
+#include "keyboard.h"
+#include "screen.h"
+#include "stdint.h"
+#include "io.h"
+
+unsigned char read_keyboard() {
+    while ((inb(KB_STATUS) & 1) == 0);
+    return inb(KB_DATA);
+}
 
 char    scancode_to_ascii(unsigned char sc) {
     switch(sc) {
@@ -31,5 +39,49 @@ char    scancode_to_ascii(unsigned char sc) {
         case KEY_ENTER: return '\n';
         case KEY_BACKSPACE: return '\b';
         default: return '?';
+    }
+}
+
+void    handle_backspace() {
+    volatile uint16_t* vga = (uint16_t*)0xB8000;
+
+    if (COL > 0) {
+        COL--;
+        vga[ROW * 80 + COL] = ' ' | 0x0F00;
+    } else if (ROW > 0) {
+        ROW--;
+        int last_col = 0;
+        for (int col = 79; col >= 0; col--) {
+            char ch = vga[ROW * 80 + col] & 0x00FF;
+            if (ch != 0) {
+                last_col = col; 
+                break;
+            }
+        }
+        COL = last_col;
+    }
+    move_cursor();
+}
+
+void    print_keyboard(char c) {
+    if (c == '\n') {
+        COL = 0;
+        ROW++;
+    }
+    else if (c == '\b') {
+        handle_backspace();
+    }
+    else
+        print_char(c);
+    move_cursor();
+}
+
+void    keyboard_loop() {
+    while(1) {
+        unsigned char sc = read_keyboard();
+        if (sc & 0x80)      // keyboard relased catch
+            continue;
+        char c = scancode_to_ascii(sc);
+        print_keyboard(c);
     }
 }

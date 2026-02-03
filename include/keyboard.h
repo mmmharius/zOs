@@ -36,6 +36,11 @@ extern int COL;
 #define KEY_N 0x31
 #define KEY_M 0x32
 
-char    scancode_to_ascii(unsigned char sc);
+unsigned char   read_keyboard();
+char            scancode_to_ascii(unsigned char sc);
+void            handle_backspace();
+void            print_keyboard(char c);
+void            print_keyboard(char c);
+void            keyboard_loop();
 
 #endif

@@ -10,7 +10,7 @@ OBJ_DIR = obj
 LIBASM_DIR = include/libasm
 LIBASM = $(LIBASM_DIR)/libasm.a
 
-SRCS = kernel/kernel.c kernel/keyboard.c
+SRCS = kernel/kernel.c kernel/keyboard.c kernel/screen.c
 OBJS = $(patsubst %.c,$(OBJ_DIR)/%.o,$(SRCS))
 
 all: kernel.bin
