@@ -3,3 +3,5 @@ obj/
 zOS.iso
 README.md
 .vscode
+*.o
+*.a
