@@ -4,6 +4,16 @@
 #include "kernel.h"
 #include "io.h"
 
+void    check_col() {
+    if (COL >= 80) {
+        COL = 0;
+        ROW++;
+    }
+    // if (ROW >= 25) {
+    //     //scrol ???
+    // }
+}
+
 void    print_char(char c) {
     volatile uint16_t* vga = (uint16_t*)0xB8000; // 0xB8000 -> VGA TEXT mode video memory address
     check_col();

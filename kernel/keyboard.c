@@ -2,6 +2,7 @@
 #include "screen.h"
 #include "stdint.h"
 #include "io.h"
+#include "ft_kprintf.h"
 
 unsigned char read_keyboard() {
     while ((inb(KB_STATUS) & 1) == 0);
@@ -51,13 +52,15 @@ void    handle_backspace() {
     } else if (ROW > 0) {
         ROW--;
         int last_col = 0;
+        char ch = 0; // kprintf
         for (int col = 79; col >= 0; col--) {
-            char ch = vga[ROW * 80 + col] & 0x00FF;
+            ch = vga[ROW * 80 + col] & 0x00FF;
             if (ch != 0) {
                 last_col = col; 
                 break;
             }
         }
+        ft_kprintf("last ch = %c\n", ch);
         COL = last_col;
     }
     move_cursor();
