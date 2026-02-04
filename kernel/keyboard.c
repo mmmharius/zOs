@@ -3,6 +3,7 @@
 #include "stdint.h"
 #include "io.h"
 #include "printk.h"
+#include "color.h"
 
 unsigned char read_keyboard() {
     while ((inb(KB_STATUS) & 1) == 0);
@@ -48,7 +49,7 @@ void handle_backspace() {
 
     if (COL > 0) {
         COL--;
-        vga[ROW * VGA_WIDTH + COL] = ' ' | VGA_COLOR;
+        vga[ROW * VGA_WIDTH + COL] = ' ' | VGA_DEFAULT_COLOR;
     } 
     else if (ROW > START_PRINT) {
         ROW--;

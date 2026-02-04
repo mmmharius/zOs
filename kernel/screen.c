@@ -4,6 +4,7 @@
 #include "kernel.h"
 #include "io.h"
 #include "printk.h"
+#include "color.h"
 
 void replace_entire_row(int row, char c)
 {
@@ -12,7 +13,7 @@ void replace_entire_row(int row, char c)
 
     for (int col = 0; col < VGA_WIDTH; col++) {
         vga[row * VGA_WIDTH + col] =
-            (uint16_t)c | VGA_COLOR;
+            (uint16_t)c | VGA_DEFAULT_COLOR;
     }
 }
 
@@ -45,7 +46,7 @@ void    check_col() {
 void    print_char(char c) {
     volatile uint16_t* vga = (uint16_t*)VGA_ADDR; // 0xB8000 -> VGA TEXT mode video memory address
     check_col();
-    vga[COL + ROW * VGA_WIDTH] = (uint16_t)c | VGA_COLOR;
+    vga[COL + ROW * VGA_WIDTH] = (uint16_t)c | VGA_DEFAULT_COLOR;
     COL++;
     move_cursor();
 }

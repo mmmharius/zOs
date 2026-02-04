@@ -20,6 +20,6 @@
 
 #define VGA_COLOR(fg, bg) ((bg << 12) | (fg << 8))
 
-#define VGA_DEFAULT_COLOR VGA_COLOR(WHITE, BLACK)
+#define VGA_DEFAULT_COLOR VGA_COLOR(BLUE, BLACK)
 
 #endif
