@@ -3,7 +3,7 @@
 
 void    init();
 void    move_cursor();
+void    move_cursor_half();
 void    load_screen();
-void    load_half();
 
 #endif

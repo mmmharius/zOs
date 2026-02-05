@@ -4,6 +4,7 @@
 #include <io.h>
 #include <printk.h>
 #include <color.h>
+#include <init.h>
 #ifdef DEBUG
     #include "debug.h"
 #endif
@@ -83,10 +84,10 @@ void    print_keyboard(char c) {
     else
         print_char(c);
     move_cursor();
-    #ifdef DEBUG
-        int id = current - screens;
-        printk(1, "STRUCT\nscreen:%d\nstart_print:%d\nrow:%d\ncol:%d\nscroll:%d\n\n\n", id, START_PRINT, current->row, current->col, current->scroll);
-    #endif
+    // #ifdef DEBUG
+    //     int id = current - screens;
+    //     printk(1, "STRUCT\nscreen:%d\nstart_print:%d\nrow:%d\ncol:%d\nscroll:%d\n\n\n", id, START_PRINT, current->row, current->col, current->scroll);
+    // #endif
 }
 
 void    keyboard_loop() {
@@ -98,13 +99,19 @@ void    keyboard_loop() {
         }
         else if (key == KEY_TAB) {
             switch_screen((current - screens + 1) % NB_SCREEN);
+        // #ifdef DEBUG
+        //     print_current_struct();
+        // #endif
             continue;
         }
-        else if (key == KEY_1)
+        else if (key == KEY_1) {
             half_screen();
-        else {
-            char c = scancode_to_ascii(sc);
-            print_keyboard(c);
+        #ifdef DEBUG
+            print_current_struct();
+        #endif
+            continue;
         }
+        char c = scancode_to_ascii(sc);
+        print_keyboard(c);
     }
 }

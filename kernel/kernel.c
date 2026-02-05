@@ -7,7 +7,7 @@
 #endif
 
 int main() {
-    init_screen();
+    init();
     
 #ifdef DEBUG
     printk(0, "DEBUG VERSION ZZZZZ   OOO   SSSS  DEBUG VERSION\n");

@@ -16,6 +16,8 @@ typedef struct s_screen {
     uint16_t buffer[VGA_WIDTH * (VGA_HEIGHT * SCREEN_LENGHT)];
     int row;
     int col;
+    int row_half;
+    int col_half;
     int row_max;
     int col_max;
     int row_start;
@@ -23,7 +25,7 @@ typedef struct s_screen {
     int scroll;
 } t_screen;
 
-extern t_screen screens[NB_SCREEN + 1];
+extern t_screen screens[NB_SCREEN];
 extern t_screen *current;
 
 void    replace_entire_row(int row, char c);
@@ -32,5 +34,7 @@ void    print_char(char c);
 void    print_42();
 void    switch_screen(int id);
 void    half_screen();
+void    cursor_for_half();
+
 
 #endif

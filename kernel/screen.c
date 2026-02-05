@@ -55,22 +55,6 @@ void    print_42() {
     print_char('2');
 }
 
-void cursor_for_half() {
-    if (current == &screens[0]) {
-        int linear_pos = current->row * VGA_WIDTH + current->col;
-
-        current->row = linear_pos / (VGA_WIDTH / 2);
-        current->col = linear_pos % (VGA_WIDTH / 2);
-    }
-    else if (current == &screens[1]) {
-        int linear_pos = current->row * VGA_WIDTH + current->col;
-
-        current->row = linear_pos / (VGA_WIDTH / 2);
-        current->col = linear_pos % (VGA_WIDTH / 2);
-    }
-}
-
-
 void    switch_screen(int id) {
 #ifdef DEBUG
     printk(1, "switching to screen %d\n", id);
@@ -78,6 +62,13 @@ void    switch_screen(int id) {
     if (id < 0 || id >= NB_SCREEN)
         return;
     current = &screens[id];
+    if (HALF_SCREEN) {
+        HALF_SCREEN = 0;
+        move_cursor_half();
+        half_screen();
+        printk(1, "\n\n%d\n\n", id);
+        return;
+    }
     load_screen();
     move_cursor();
 }
@@ -85,19 +76,39 @@ void    switch_screen(int id) {
 void    half_screen() {
     screens[0].col_max = VGA_WIDTH / 2;
     screens[1].col_start = VGA_WIDTH / 2;
-    cursor_for_half();
     volatile uint16_t* vga = (uint16_t*)VGA_ADDR;
-    HALF_SCREEN = 1;
-    for (int row = 0; row < VGA_HEIGHT; row++) {
-        for (int col = 0; col < VGA_WIDTH / 2; col++) {
-            vga[row * VGA_WIDTH + col] = screens[0].buffer[row * VGA_WIDTH + col] | VGA_DEFAULT_COLOR;
-        }
-        for (int col = 0; col < VGA_WIDTH / 2; col++) {
-            vga[row * VGA_WIDTH + (col + VGA_WIDTH / 2)] = screens[1].buffer[row * VGA_WIDTH + col] | VGA_DEFAULT_COLOR;
-        }
+    if (HALF_SCREEN == 1) {
+        HALF_SCREEN = 0;
+        load_screen();
+        return;
     }
-    current = &screens[NB_SCREEN];
-    load_half();
+    HALF_SCREEN = 1;
+    int buffer_index = 0;
+    
+    for (int vga_row = 0; vga_row < VGA_HEIGHT; vga_row++) {
+        for (int col = 0; col < VGA_WIDTH / 2; col++) {
+            vga[vga_row * VGA_WIDTH + col] = screens[0].buffer[buffer_index + col] | VGA_DEFAULT_COLOR;
+            if (current == &screens[0]) {
+                int cursor_linear = current->row * VGA_WIDTH + current->col;
+                if ((buffer_index + col) == cursor_linear) {
+                    screens[0].row_half = vga_row;
+                    screens[0].col_half = col;
+                }
+            }
+        }
+        for (int col = 0; col < VGA_WIDTH / 2; col++) {
+            vga[vga_row * VGA_WIDTH + (col + VGA_WIDTH / 2)] = screens[1].buffer[buffer_index + col] | VGA_DEFAULT_COLOR;
+            if (current == &screens[1]) {
+                int cursor_linear = current->row * VGA_WIDTH + current->col;
+                if ((buffer_index + col) == cursor_linear) {
+                    screens[1].row_half = vga_row;
+                    screens[1].col_half = col;
+                }
+            }
+        }
+        buffer_index += VGA_WIDTH / 2;
+    }
+    move_cursor_half();
 }
 
 /* 
