@@ -47,17 +47,17 @@ char    scancode_to_ascii(unsigned char sc) {
 void handle_backspace() {
     volatile uint16_t* vga = (uint16_t*)VGA_ADDR;
 
-    if (COL > 0) {
-        COL--;
-        vga[ROW * VGA_WIDTH + COL] = ' ' | VGA_DEFAULT_COLOR;
+    if (current->col > 0) {
+        current->col--;
+        vga[current->row * VGA_WIDTH + current->col] = ' ' | VGA_DEFAULT_COLOR;
     } 
-    else if (ROW > START_PRINT) {
-        ROW--;
-        COL = 0;
+    else if (current->row > START_PRINT) {
+        current->row--;
+        current->col = 0;
         for (int col = 79; col >= 0; col--) {
-            char ch = vga[ROW * VGA_WIDTH + col] & 0x00FF;
+            char ch = vga[current->row * VGA_WIDTH + col] & 0x00FF;
             if (ch != ' ' && ch != 0) {
-                COL = col + 1;
+                current->col = col + 1;
                 break;
             }
         }
@@ -67,12 +67,12 @@ void handle_backspace() {
 
 void    print_keyboard(char c) {
     if (c == '\n') {
-        COL = 0;
-        ROW++;
-        printk(1, "ROW before space : %d\n", ROW);
+        current->col = 0;
+        current->row++;
+        printk(1, "ROW before space : %d\n", current->row);
         check_col();
         move_cursor();
-        printk(1, "ROW adter space : %d\n", ROW);
+        printk(1, "ROW adter space : %d\n", current->row);
     }
     else if (c == '\b') {
         handle_backspace();

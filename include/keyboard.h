@@ -1,13 +1,8 @@
 #ifndef KEYBOARD_H
 #define KEYBOARD_H
 
-extern int ROW;
-extern int COL;
-extern int SCROLL;
-
 #define KB_DATA 0x60
 #define KB_STATUS 0x64
-#define START_PRINT 5
 #define KEY_ENTER 0x1C
 #define KEY_BACKSPACE 0x0E
 #define KEY_Q 0x10
