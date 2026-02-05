@@ -3,6 +3,9 @@
 
 #define KB_DATA 0x60
 #define KB_STATUS 0x64
+
+#define KEY_TAB 0x0F
+#define KEY_SHIFT 0xE0
 #define KEY_ENTER 0x1C
 #define KEY_BACKSPACE 0x0E
 #define KEY_Q 0x10
@@ -31,11 +34,12 @@
 #define KEY_B 0x30
 #define KEY_N 0x31
 #define KEY_M 0x32
+#define KEY_RELEASE 0x80
+#define KEY_SPACE 0x39
 
 unsigned char   read_keyboard();
 char            scancode_to_ascii(unsigned char sc);
 void            handle_backspace();
-void            print_keyboard(char c);
 void            print_keyboard(char c);
 void            keyboard_loop();
 

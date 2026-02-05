@@ -43,6 +43,8 @@ char    scancode_to_ascii(unsigned char sc) {
         case KEY_M: return 'M';
         case KEY_ENTER: return '\n';
         case KEY_BACKSPACE: return '\b';
+        case KEY_SHIFT: return '1';
+        case KEY_SPACE: return ' ';
         default: return '?';
     }
 }
@@ -90,9 +92,17 @@ void    print_keyboard(char c) {
 void    keyboard_loop() {
     while(1) {
         unsigned char sc = read_keyboard();
-        if (sc & 0x80)      // keyboard relased catch
+        unsigned char key = sc & 0x7F;
+        if (sc & KEY_RELEASE) {
             continue;
-        char c = scancode_to_ascii(sc);
-        print_keyboard(c);
+        }
+        else if (key == KEY_TAB) {
+            switch_screen((current - screens + 1) % NB_SCREEN);
+            continue;
+        }
+        else {
+            char c = scancode_to_ascii(sc);
+            print_keyboard(c);
+        }
     }
 }

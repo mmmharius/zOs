@@ -9,7 +9,7 @@ int COL = 0;
 int ROW = 0;
 int SCREEN = 1;
 
-t_screen screens[NB_SCREEN - 1];
+t_screen screens[NB_SCREEN];
 t_screen *current;
 
 t_screen s_creen = {

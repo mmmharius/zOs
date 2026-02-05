@@ -44,6 +44,7 @@ void    print_char(char c) {
     volatile uint16_t* vga = (uint16_t*)VGA_ADDR; // 0xB8000 -> VGA TEXT mode video memory address
     check_col();
     vga[current->col + current->row * VGA_WIDTH] = (uint16_t)c | VGA_DEFAULT_COLOR;
+    current->buffer[current->row * VGA_WIDTH + current->col] = c;
     current->col++;
     move_cursor();
 }
@@ -65,15 +66,37 @@ void move_cursor() {
 }
 
 void init_screen() {
-    for (int i = 0; i < (NB_SCREEN - 1); i++) {
+    for (int i = 0; i <= (NB_SCREEN - 1); i++) {
+        printk(1, "%d, %d", i, (NB_SCREEN - 1));
         screens[i].row = 0;
         screens[i].col = 0;
         screens[i].scroll = 0;
 
-        for (int j = START_PRINT; j < VGA_WIDTH * VGA_HEIGHT; j++)
+        for (int j = START_PRINT; j < VGA_WIDTH * (VGA_HEIGHT * SCREEN_LENGHT); j++)
             screens[i].buffer[j] = (uint16_t)' ' | VGA_DEFAULT_COLOR;
     }
     current = &screens[0];
+}
+
+void load_screen() {
+    volatile uint16_t* vga = (uint16_t*)VGA_ADDR;
+    for (int row = 0; row < VGA_HEIGHT; row++) {
+        for (int col = 0; col < VGA_WIDTH; col++) {
+            uint16_t c = current->buffer[(row * VGA_WIDTH) + col];
+            vga[col + row * VGA_WIDTH] = (uint16_t)c | VGA_DEFAULT_COLOR;
+        }
+    }
+}
+
+void switch_screen(int id) {
+#ifdef DEBUG
+    printk(1, "switching to screen %d\n", id);
+#endif
+    if (id < 0 || id >= NB_SCREEN)
+        return;
+    current = &screens[id];
+    load_screen();
+    move_cursor();
 }
 
 /* 
