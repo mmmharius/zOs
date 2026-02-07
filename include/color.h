@@ -20,6 +20,9 @@
 
 #define VGA_COLOR(fg, bg) ((bg << 12) | (fg << 8))
 
-#define VGA_DEFAULT_COLOR VGA_COLOR(WHITE, BLACK)
+#define SCREEN_0_COLOR VGA_COLOR(WHITE, BLACK)
+#define SCREEN_1_COLOR VGA_COLOR(L_GREEN, BLACK)
+
+#define GET_SCREEN_COLOR(id) ((id) == 0 ? SCREEN_0_COLOR : SCREEN_1_COLOR)
 
 #endif

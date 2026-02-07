@@ -84,6 +84,7 @@ void screen_putchar(char c) {
     screen_t *s = &screens[current_screen];
     int width = get_width();
     volatile uint16_t* vga = (uint16_t*)VGA_ADDR;
+    uint16_t color = GET_SCREEN_COLOR(current_screen);
     
     if (c == '\n') {
         s->col = 0;
@@ -92,7 +93,7 @@ void screen_putchar(char c) {
         s->buffer[s->row * VGA_WIDTH + s->col] = c;
         
         int pos = get_vga_pos(current_screen, s->row, s->col);
-        vga[pos] = (uint16_t)c | VGA_DEFAULT_COLOR;
+        vga[pos] = (uint16_t)c | color;
         
         s->col++;
         
@@ -114,6 +115,7 @@ void screen_backspace() {
     screen_t *s = &screens[current_screen];
     int width = get_width();
     volatile uint16_t* vga = (uint16_t*)VGA_ADDR;
+    uint16_t color = GET_SCREEN_COLOR(current_screen);
     
     if (s->col > 0) {
         s->col--;
@@ -133,39 +135,66 @@ void screen_backspace() {
     
     s->buffer[s->row * VGA_WIDTH + s->col] = ' ';
     int pos = get_vga_pos(current_screen, s->row, s->col);
-    vga[pos] = ' ' | VGA_DEFAULT_COLOR;
+    vga[pos] = ' ' | color;
     
     update_cursor();
 }
 
 void screen_refresh() {
     volatile uint16_t* vga = (uint16_t*)VGA_ADDR;
+    uint16_t color = GET_SCREEN_COLOR(current_screen);
     
     for (int i = 0; i < VGA_WIDTH * VGA_HEIGHT; i++) {
-        vga[i] = ' ' | VGA_DEFAULT_COLOR;
+        vga[i] = ' ' | color;
     }
     
     if (mode_split == 0) {
         screen_t *s = &screens[current_screen];
+        uint16_t color_screen = GET_SCREEN_COLOR(current_screen);
         for (int row = 0; row < VGA_HEIGHT; row++) {
             for (int col = 0; col < VGA_WIDTH; col++) {
                 char c = s->buffer[row * VGA_WIDTH + col];
-                vga[row * VGA_WIDTH + col] = (uint16_t)c | VGA_DEFAULT_COLOR;
+                vga[row * VGA_WIDTH + col] = (uint16_t)c | color_screen;
             }
         }
-    } 
+    }
     else {
         for (int id = 0; id < NB_SCREEN; id++) {
             screen_t *s = &screens[id];
+            uint16_t color_scr = GET_SCREEN_COLOR(id);
             int offset = id * (VGA_WIDTH / 2);
             
             for (int row = 0; row < VGA_HEIGHT; row++) {
                 for (int col = 0; col < VGA_WIDTH / 2; col++) {
                     char c = s->buffer[row * VGA_WIDTH + col];
-                    vga[row * VGA_WIDTH + col + offset] = (uint16_t)c | VGA_DEFAULT_COLOR;
+                    vga[row * VGA_WIDTH + col + offset] = (uint16_t)c | color_scr;
                 }
             }
         }
     }
     update_cursor();
 }
+
+/* 
+    vga[0] = (uint16_t)'4' | 0x0F00
+
+    (uint16_t)'4' in ASCII  = 0x0034
+    attribute (white/black) = 0x0F00
+    result                  = 0x0F34
+
+    0x0F34 = 0000 1111 0011 0100
+             └┬─┘ └┬─┘ └───┬───┘
+              │    │       └─ ASCII character ('4')
+              │    └── foreground color of text
+              └── color of screen behind text
+
+    Foreground (lower 4 bits of attribute):
+    0xF (or 1111) → white text
+
+    Background (upper 4 bits of attribute):
+    0x0 (or 0000) → black background
+
+    Memory (little endian):
+    [0xB8000] = 0x34  // low byte character 
+    [0xB8001] = 0x0F  // high byte attribute
+*/
