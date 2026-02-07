@@ -59,7 +59,7 @@ void handle_backspace() {
     } 
     else if (current->row > START_PRINT) {
         current->row--;
-        current->col = 0;
+        current->col = current->col_start;
         for (int col = 79; col >= 0; col--) {
             char ch = vga[current->row * VGA_WIDTH + col] & 0x00FF;
             if (ch != ' ' && ch != 0) {
@@ -72,15 +72,17 @@ void handle_backspace() {
 }
 
 void    print_keyboard(char c) {
+    #ifdef DEBUG
+        printk(1, "print_keyboard call\n");
+    #endif
     if (c == '\n') {
-        current->col = 0;
+        current->buffer[current->row * VGA_WIDTH + current->col] = '\n';
+        current->col = current->col_start;
         current->row++;
         check_col();
-        move_cursor();
     }
-    else if (c == '\b') {
+    else if (c == '\b')
         handle_backspace();
-    }
     else
         print_char(c);
     move_cursor();

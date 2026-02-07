@@ -28,25 +28,34 @@ void    scroll() {
         }
     }
     current->row = VGA_HEIGHT - 1;
-    current->col = 0;
+    current->col = current->col_start;
     replace_entire_row(current->row, ' ');
 }
 
 void    check_col() {
-    if (current->col >= VGA_WIDTH) {
-        current->col = 0;
+    if (current->col >= current->col_max) {
+        current->col = current->col_start;
         current->row++;
     }
-    if (current->row >= VGA_HEIGHT)
+    if (current->row >= current->row_max)
         scroll();
 }
 
 void    print_char(char c) {
     volatile uint16_t* vga = (uint16_t*)VGA_ADDR; // 0xB8000 -> VGA TEXT mode video memory address
-    check_col();
-    vga[current->col + current->row * VGA_WIDTH] = (uint16_t)c | VGA_DEFAULT_COLOR;
-    current->buffer[current->row * VGA_WIDTH + current->col] = c;
-    current->col++;
+    if (HALF_SCREEN){
+        vga[(current->col_half + current->col_start) + (current->row_half + current->row_start) * VGA_WIDTH] = (uint16_t)c | VGA_DEFAULT_COLOR;
+        current->buffer[current->row * VGA_WIDTH + current->col] = c;
+        current->col_half++;
+        current->col++;
+        check_col();
+    }
+    else {
+        vga[current->col + current->row * VGA_WIDTH] = (uint16_t)c | VGA_DEFAULT_COLOR;
+        current->buffer[current->row * VGA_WIDTH + current->col] = c;
+        current->col++;
+        check_col();
+    }
     move_cursor();
 }
 
@@ -64,11 +73,12 @@ void    switch_screen(int id) {
     current = &screens[id];
     if (HALF_SCREEN) {
         HALF_SCREEN = 0;
-        move_cursor_half();
         half_screen();
-        printk(1, "\n\n%d\n\n", id);
         return;
     }
+    #ifdef DEBUG
+        printk(1, "\n\n%d\n\n", id);
+    #endif
     load_screen();
     move_cursor();
 }

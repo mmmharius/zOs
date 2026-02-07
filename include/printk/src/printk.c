@@ -9,12 +9,12 @@ int	ft_kputchar(uint8_t c, int output) {
 		volatile uint16_t* vga = (uint16_t*)0xB8000;
 		
 		if (c == '\n') {
-			current->col = 0;
+			current->col = current->col_start;
 			current->row++;
 			check_col();
 		}
 	else {
-		vga[current->row * 80 + current->col] = (uint16_t)c | VGA_DEFAULT_COLOR;
+		vga[current->row * VGA_WIDTH + current->col] = (uint16_t)c | VGA_DEFAULT_COLOR;
 		current->buffer[current->row * VGA_WIDTH + current->col] = c;
 		current->col++;
 		check_col();
