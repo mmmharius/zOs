@@ -6,7 +6,7 @@
 #define VGA_ADDR 0xB8000  // 0xB8000 -> VGA TEXT mode video memory address
 #define VGA_WIDTH 80
 #define VGA_HEIGHT 25
-#define NB_SCREEN 2
+#define NB_SCREEN 3
 
 typedef struct {
     char buffer[VGA_WIDTH * VGA_HEIGHT];

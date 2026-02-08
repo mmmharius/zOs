@@ -1,5 +1,6 @@
 #ifndef COLOR_H
 #define COLOR_H
+#include <stdint.h>
 
 #define BLACK           0x0
 #define BLUE            0x1
@@ -24,9 +25,9 @@
 #define SCREEN_1_COLOR VGA_COLOR(L_RED, BLACK)
 #define SCREEN_2_COLOR VGA_COLOR(WHITE, BLACK)
 
-static inline uint8_t get_screen_color(uint8_t id)
+static inline uint16_t get_screen_color(uint16_t id)
 {
-    static const uint8_t colors[] = {
+    static const uint16_t colors[] = {
         SCREEN_0_COLOR,
         SCREEN_1_COLOR,
         SCREEN_2_COLOR

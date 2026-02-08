@@ -84,7 +84,7 @@ void screen_putchar(char c) {
     screen_t *s = &screens[current_screen];
     int width = get_width();
     volatile uint16_t* vga = (uint16_t*)VGA_ADDR;
-    uint16_t color = GET_SCREEN_COLOR(current_screen);
+    uint16_t color = get_screen_color(current_screen);
     
     if (c == '\n') {
         s->col = 0;
@@ -115,7 +115,7 @@ void screen_backspace() {
     screen_t *s = &screens[current_screen];
     int width = get_width();
     volatile uint16_t* vga = (uint16_t*)VGA_ADDR;
-    uint16_t color = GET_SCREEN_COLOR(current_screen);
+    uint16_t color = get_screen_color(current_screen);
     
     if (s->col > 0) {
         s->col--;
@@ -142,7 +142,7 @@ void screen_backspace() {
 
 void screen_refresh() {
     volatile uint16_t* vga = (uint16_t*)VGA_ADDR;
-    uint16_t color = GET_SCREEN_COLOR(current_screen);
+    uint16_t color = get_screen_color(current_screen);
     
     for (int i = 0; i < VGA_WIDTH * VGA_HEIGHT; i++) {
         vga[i] = ' ' | color;
@@ -150,7 +150,7 @@ void screen_refresh() {
     
     if (mode_split == 0) {
         screen_t *s = &screens[current_screen];
-        uint16_t color_screen = GET_SCREEN_COLOR(current_screen);
+        uint16_t color_screen = get_screen_color(current_screen);
         for (int row = 0; row < VGA_HEIGHT; row++) {
             for (int col = 0; col < VGA_WIDTH; col++) {
                 char c = s->buffer[row * VGA_WIDTH + col];
@@ -161,7 +161,7 @@ void screen_refresh() {
     else {
         for (int id = 0; id < NB_SCREEN; id++) {
             screen_t *s = &screens[id];
-            uint16_t color_scr = GET_SCREEN_COLOR(id);
+            uint16_t color_scr = get_screen_color(id);
             int offset = id * (VGA_WIDTH / 2);
             
             for (int row = 0; row < VGA_HEIGHT; row++) {
