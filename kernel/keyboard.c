@@ -4,7 +4,10 @@
 #include <io.h>
 #ifdef DEBUG
     #include <printk.h>
+    #include <debug.h>
 #endif
+
+int ctrl_pressed = 0;
 
 unsigned char read_keyboard() {
     while ((inb(KB_STATUS) & 1) == 0);
@@ -48,40 +51,55 @@ char scancode_to_ascii(unsigned char sc) {
 }
 
 void keyboard_loop() {
-    while(1) {
-        unsigned char sc = read_keyboard();
+    while (1) {
+        unsigned char sc  = read_keyboard();
         unsigned char key = sc & 0x7F;
-        
-        if (sc & KEY_RELEASE)
-            continue;
-        
-        if (key == KEY_TAB) {
-            if (mode_split) {
-                int other = (current_split + 1) % NB_SCREEN;
-        
-                if (current_screen == current_split)
-                    current_screen = other;
-                else
-                    current_screen = current_split;
-                // split_refresh(current_split, (current_split + 1) % NB_SCREEN);
-                update_cursor();
-            }
-            else
-                screen_switch((current_screen + 1) % NB_SCREEN);
+
+        if (key == KEY_CTRL) {
+            ctrl_pressed = !(sc & KEY_RELEASE);
             continue;
         }
-        
+        if (sc & KEY_RELEASE)
+            continue;
+
+        if (ctrl_pressed && key == KEY_G) {
+            #ifdef DEBUG
+                toggle_debug_screen();
+            #else
+                char *msg = "debug mode not active : make debug for on...\n";
+                for (int i = 0; msg[i]; i++)
+                    screen_putchar(msg[i], scr.current);
+            #endif
+            continue;
+        }
+
+        if (key == KEY_TAB) {
+            if (scr.mode == SCR_MODE_SPLIT) {
+                int other = scr.split_right == scr.current ? scr.split_left : scr.split_right;
+                if (!(scr.screens[other].flags & SCR_DEBUG)) {
+                    scr.current = other;
+                    update_cursor();
+                }
+            }
+            else
+                screen_switch((scr.current + 1) % MAX_SCREENS);
+            continue;
+        }
+
         if (key == KEY_1) {
             screen_toggle_split();
             continue;
         }
-        
+
         char c = scancode_to_ascii(sc);
-        if (c == 0) 
+        #ifdef DEBUG
+            debug_print_state(sc);
+        #endif
+        if (c == 0)
             continue;
         if (c == '\b')
             screen_backspace();
         else
-            screen_putchar(c);
+            screen_putchar(c, scr.current);
     }
 }

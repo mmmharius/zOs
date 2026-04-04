@@ -1,6 +1,7 @@
 #ifndef PRINTK_H
 #define PRINTK_H
 
+#include <debug.h>
 #include <color.h>
 #include <io.h>
 #include <screen.h>
@@ -12,9 +13,9 @@
 extern int ROW;
 extern int COL;
 
-
-#define VGA 0
+#define VGA    0
 #define SERIAL 1
+#define DBG    2
 
 int	ft_kputchar(uint8_t c, int output);
 int	ft_putstr(char *str, int output);

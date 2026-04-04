@@ -4,12 +4,14 @@ ENTRY(_start)                   /* entry point (defined in boot.asm) */
 SECTIONS
 {
     . = 1M;                         /* kernel load at 1MB (GRUB requirement) */
-    
+
     .multiboot : { *(.multiboot) }  /* multiboot first (need to be in first 8192bit of kernel) */
 
-    .text : { *(.text) }            /* code section */
-    
-    .data : { *(.data) }            /* init data */
-    
-    .bss : { *(.bss) }              /* uninit data */
+    .text : { *(.text) }            /* code section (rx) */
+
+    .rodata : { *(.rodata) }        /* read-only data (r) */
+
+    .data : { *(.data) }            /* init data (rw) */
+
+    .bss : { *(.bss) }              /* uninit data (rw) */
 }

@@ -16,6 +16,8 @@ align 4                     ; align to 4-byte boundary (multiboot requirement)
     dd MBOOT_FLAGS
     dd MBOOT_CHECKSUM
 
+section .note.GNU-stack noalloc noexec nowrite progbits
+
 section .text
 global _start               ; entry point visible to linker
 extern main                 ; extern = other file (kernel.c)

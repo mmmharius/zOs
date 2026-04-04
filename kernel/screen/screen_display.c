@@ -4,60 +4,29 @@
     #include <printk.h>
 #endif
 
-void    split_refresh(int left_id, int right_id) {
-    volatile uint16_t* vga = (uint16_t*)VGA_ADDR;
-    screen_t *s_left = &screens[left_id];
-    screen_t *s_right = &screens[right_id];
-    uint16_t color_left = get_screen_color(left_id);
-    uint16_t color_right = get_screen_color(right_id);
-    
+static void vga_draw_screen(screen_t *s, int id, int col_offset) {
+    volatile uint16_t *vga = (uint16_t *)VGA_ADDR;
+    uint16_t           color = get_screen_color(id);
+    int                width = col_offset ? VGA_WIDTH / 2 : VGA_WIDTH;
+
     for (int row = 0; row < VGA_HEIGHT; row++)
-    for (int col = 0; col < VGA_WIDTH/2; col++)
-    vga[row*VGA_WIDTH + col] = (uint16_t)s_left->buffer[row*VGA_WIDTH + col] | color_left;
-    
-    for (int row = 0; row < VGA_HEIGHT; row++)
-    for (int col = 0; col < VGA_WIDTH/2; col++)
-    vga[row*VGA_WIDTH + col + VGA_WIDTH/2] = (uint16_t)s_right->buffer[row*VGA_WIDTH + col] | color_right;
+        for (int col = 0; col < width; col++)
+            vga[row * VGA_WIDTH + col + col_offset] =
+                (uint16_t)s->buffer[row * VGA_WIDTH + col] | color;
+}
+
+void split_refresh(int left_id, int right_id) {
+    vga_draw_screen(&scr.screens[left_id],  left_id,  0);
+    vga_draw_screen(&scr.screens[right_id], right_id, VGA_WIDTH / 2);
     update_cursor();
 }
 
-void    screen_refresh() {
-    volatile uint16_t* vga = (uint16_t*)VGA_ADDR;
-    uint16_t color = get_screen_color(current_screen);
-    
-    for (int i = 0; i < VGA_WIDTH * VGA_HEIGHT; i++) {
-        vga[i] = ' ' | color;
-    }
-    
-    screen_t *s = &screens[current_screen];
-    uint16_t color_screen = get_screen_color(current_screen);
-    
-    for (int row = 0; row < VGA_HEIGHT; row++) {
-        for (int col = 0; col < VGA_WIDTH; col++) {
-            char c = s->buffer[row * VGA_WIDTH + col];
-            vga[row * VGA_WIDTH + col] = (uint16_t)c | color_screen;
-        }
-    }   
-       
+void screen_refresh() {
+    vga_draw_screen(&scr.screens[scr.current], scr.current, 0);
     update_cursor();
 }
 
-void    screen_toggle_split() {
-    mode_split = (mode_split == 1) ? 0 : 1;
-    if (mode_split == 1) {
-        current_split = current_screen;
-    #ifdef  DEBUG
-        printk(1, "current_split value : %d \n", current_split);
-    #endif
-        split_refresh(current_split, (current_split + 1) % NB_SCREEN);
-    }
-    else
-        screen_refresh();
-}
-
-
-
-/* 
+/*
 vga[0] = (uint16_t)'4' | 0x0F00
 
 (uint16_t)'4' in ASCII  = 0x0034
@@ -77,6 +46,23 @@ result                  = 0x0F34
     0x0 (or 0000) → black background
 
     Memory (little endian):
-    [0xB8000] = 0x34  // low byte character 
+    [0xB8000] = 0x34  // low byte character
     [0xB8001] = 0x0F  // high byte attribute
 */
+
+void screen_toggle_split() {
+    if (scr.mode == SCR_MODE_NORMAL) {
+        scr.split_left  = scr.current;
+        scr.split_right = (scr.current + 1) % MAX_SCREENS;
+        scr.mode        = SCR_MODE_SPLIT;
+        scr.screens[scr.split_left].flags  |= SCR_SPLIT_L | SCR_RENDERED;
+        scr.screens[scr.split_right].flags |= SCR_SPLIT_R | SCR_RENDERED;
+        split_refresh(scr.split_left, scr.split_right);
+    } else {
+        scr.screens[scr.split_left].flags  &= ~(SCR_SPLIT_L | SCR_RENDERED);
+        scr.screens[scr.split_right].flags &= ~(SCR_SPLIT_R | SCR_RENDERED);
+        scr.mode        = SCR_MODE_NORMAL;
+        scr.screens[scr.current].flags |= SCR_RENDERED;
+        screen_refresh();
+    }
+}
