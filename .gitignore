@@ -1,6 +1,6 @@
 kernel.bin
 obj/
-zOS.iso
+zOs.iso
 .vscode
 *.o
 *.a
