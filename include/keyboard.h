@@ -5,7 +5,9 @@
 #define KB_STATUS 0x64
 
 #define KEY_TAB 0x0F
-#define KEY_SHIFT 0xE0
+#define KEY_LSHIFT 0x2A
+#define KEY_RSHIFT 0x36
+#define KEY_EXTENDED 0xE0
 #define KEY_ENTER 0x1C
 #define KEY_BACKSPACE 0x0E
 #define KEY_Q 0x10

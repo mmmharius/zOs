@@ -6,8 +6,8 @@ CFLAGS   = -Wall -Wextra -Werror -m32 -fno-builtin -fno-stack-protector -nostdli
 LDFLAGS  = -m elf_i386 -T linker.ld
 OBJ_DIR       = obj
 DEBUG_OBJ_DIR = obj/debug
-LIBASM_DIR = include/libasm
-LIBASM     = $(LIBASM_DIR)/libasm.a
+LIBASM_DIR = include/libasm_zOs
+LIBASM     = $(LIBASM_DIR)/libasm_zOs.a
 PRINTK_DIR = include/printk
 PRINTK_LIB = $(PRINTK_DIR)/printk.a
 
