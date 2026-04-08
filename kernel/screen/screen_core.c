@@ -7,24 +7,6 @@
 
 screen_mgr_t scr;
 
-#ifdef DEBUG
-void toggle_debug_screen() {
-    if (scr.mode == SCR_MODE_NORMAL) {
-        scr.split_left  = scr.current;
-        scr.split_right = DEBUG_SCREEN_ID;
-        scr.mode        = SCR_MODE_SPLIT;
-        scr.screens[scr.split_left].flags  |= SCR_SPLIT_L | SCR_RENDERED;
-        scr.screens[scr.split_right].flags |= SCR_SPLIT_R | SCR_RENDERED | SCR_DEBUG;
-        split_refresh(scr.split_left, scr.split_right);
-    } else {
-        scr.screens[scr.split_left].flags  &= ~(SCR_SPLIT_L | SCR_RENDERED);
-        scr.screens[scr.split_right].flags &= ~(SCR_SPLIT_R | SCR_RENDERED);
-        scr.screens[scr.current].flags     |= SCR_RENDERED;
-        scr.mode = SCR_MODE_NORMAL;
-        screen_refresh();
-    }
-}
-#endif
 
 void screen_init() {
     for (int i = 0; i < MAX_SCREENS; i++) {

@@ -20,7 +20,6 @@ LIBASM_DIR     = libasm_zOs
 LIBASM_LIB     = $(LIBASM_DIR)/libasm_zOs.a
 PRINTK_DIR     = printk_zOs
 PRINTK_LIB     = $(PRINTK_DIR)/printk_zOs.a
-
 CLEAN_TARGETS  = $(OBJ_DIR) isodir/boot/kernel.bin
 FCLEAN_TARGETS = $(OBJ_DIR) isodir/boot/kernel.bin kernel.bin zOs.iso
 

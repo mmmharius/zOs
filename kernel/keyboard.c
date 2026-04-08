@@ -64,7 +64,7 @@ void keyboard_loop() {
 
         if (ctrl_pressed && key == KEY_G) {
             #ifdef DEBUG
-                toggle_debug_screen();
+                screen_toggle_split();
             #else
                 char *msg = "debug mode not active : make debug for on...\n";
                 for (int i = 0; msg[i]; i++)

@@ -52,8 +52,5 @@ void    replace_row(int row, int id);
 void    scroll(int id);
 void    split_refresh(int left_id, int right_id);
 
-#ifdef DEBUG
-void    toggle_debug_screen();
-#endif
 
 #endif

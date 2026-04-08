@@ -4,6 +4,23 @@
     #include <printk.h>
 #endif
 
+static void scr_enter_split(int left, int right, uint8_t right_extra) {
+    scr.split_left  = left;
+    scr.split_right = right;
+    scr.mode        = SCR_MODE_SPLIT;
+    scr.screens[left].flags  |= SCR_SPLIT_L | SCR_RENDERED;
+    scr.screens[right].flags |= SCR_SPLIT_R | SCR_RENDERED | right_extra;
+    split_refresh(left, right);
+}
+
+static void scr_exit_split(void) {
+    scr.screens[scr.split_left].flags  &= ~(SCR_SPLIT_L | SCR_RENDERED);
+    scr.screens[scr.split_right].flags &= ~(SCR_SPLIT_R | SCR_RENDERED);
+    scr.screens[scr.current].flags     |= SCR_RENDERED;
+    scr.mode = SCR_MODE_NORMAL;
+    screen_refresh();
+}
+
 static void vga_draw_screen(screen_t *s, int id, int col_offset) {
     volatile uint16_t *vga = (uint16_t *)VGA_ADDR;
     uint16_t           color = get_screen_color(id);
@@ -52,17 +69,12 @@ result                  = 0x0F34
 
 void screen_toggle_split() {
     if (scr.mode == SCR_MODE_NORMAL) {
-        scr.split_left  = scr.current;
-        scr.split_right = (scr.current + 1) % MAX_SCREENS;
-        scr.mode        = SCR_MODE_SPLIT;
-        scr.screens[scr.split_left].flags  |= SCR_SPLIT_L | SCR_RENDERED;
-        scr.screens[scr.split_right].flags |= SCR_SPLIT_R | SCR_RENDERED;
-        split_refresh(scr.split_left, scr.split_right);
+        #ifdef DEBUG
+            scr_enter_split(scr.current, DEBUG_SCREEN_ID, SCR_DEBUG);
+        #else
+            scr_enter_split(scr.current, (scr.current + 1) % MAX_SCREENS, 0);
+        #endif
     } else {
-        scr.screens[scr.split_left].flags  &= ~(SCR_SPLIT_L | SCR_RENDERED);
-        scr.screens[scr.split_right].flags &= ~(SCR_SPLIT_R | SCR_RENDERED);
-        scr.mode        = SCR_MODE_NORMAL;
-        scr.screens[scr.current].flags |= SCR_RENDERED;
-        screen_refresh();
+        scr_exit_split();
     }
 }
