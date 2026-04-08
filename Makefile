@@ -45,7 +45,14 @@ define del_path
 	fi
 endef
 
-all: banner kernel.bin
+check_submodules:
+	@if [ ! -f printk_zOs/printk.h ]; then \
+		@printf "\n$(RED)$(BOLD)Submodules printk_zOs or libasm_zOs not here"; \
+		@printf "\n$(BLUE)$(BOLD)Initializing submodules...\n"; \
+		git submodule update --init --recursive; \
+	fi
+
+all: check_submodules banner kernel.bin
 	@printf "\n $(GREEN)$(BOLD)Build complete$(RESET) $(GREEN)[OK]$(RESET)\n\n"
 
 banner:
