@@ -1,7 +1,7 @@
 # zOS
 
-Kernel x86 32-bit bare-metal. C + NASM. Boot GRUB, VGA text mode, clavier PS/2.
-Pas de libc, pas de syscalls, pas de filesystem.
+Kernel x86 32-bit bare-metal. C + NASM. Boot GRUB, VGA text mode, keyboard PS/2.
+no libc, no syscalls, no filesystem.
 
 ---
 
@@ -11,11 +11,11 @@ Pas de libc, pas de syscalls, pas de filesystem.
 git clone git@github.com:mmmharius/zOs.git
 cd zOs
 
-# si include/libasm_zOs/ est vide après le clone :
+# if include/libasm_zOs/ is empty :
 git clone git@github.com:mmmharius/libasm_zOs.git include/libasm_zOs
 ```
 
-### Dépendances
+### Dependencies
 
 ```sh
 sudo apt install nasm gcc grub-pc-bin grub-common xorriso qemu-system-x86
@@ -32,27 +32,27 @@ sudo apt install gcc-multilib
 make          # kernel.bin
 make run      # kernel.bin + ISO + QEMU
 make debug    # -DDEBUG → active Ctrl+G debug panel
-make corr     # -DCORR  → affiche juste "42"
-make iso      # ISO seulement, pas de QEMU
+make corr     # -DCORR  → just displays "42"
+make iso      # ISO only, no QEMU
 make clean
 make fclean
 make re
 ```
 
-QEMU est lancé avec `-serial stdio` → `printk(SERIAL, ...)` sort dans le terminal.
+QEMU is lunch `-serial stdio` → `printk(SERIAL, ...)` output to the terminal.
 
 ---
 
-## Contrôles
+## Controls
 
-| Touche      | Action                                              |
+| key         | Action                                              |
 |-------------|-----------------------------------------------------|
-| `Tab`       | Screen suivant (mode normal)                        |
-| `Tab`       | Changer de panel actif (split)                      |
+| `Tab`       | Next Screen (normal mode)                           |
+| `Tab`       | Switch to split mode/normal mode                    |
 | `1`         | Toggle split view                                   |
-| `Ctrl+G`    | Toggle debug panel (`make debug` requis)            |
-| `Backspace` | Supprime le dernier caractère                       |
-| `Enter`     | Nouvelle ligne                                      |
+| `Ctrl+G`    | Toggle debug panel (`make debug` need)              |
+| `Backspace` | Like a normal backspace just delete...              |
+| `Enter`     | New ligne                                           |
 
 ---
 
@@ -75,7 +75,7 @@ zOs/
 │       ├── screen_utils.c   get_vga_pos, update_cursor, scroll
 │       └── README.md
 ├── include/
-│   ├── color.h              VGA_COLOR(), palette, couleurs par screen
+│   ├── color.h              VGA_COLOR(), palette, colors per screen
 │   ├── debug.h              DBG_HISTORY_SIZE
 │   ├── io.h                 inb() / outb()
 │   ├── keyboard.h           scancodes PS/2
