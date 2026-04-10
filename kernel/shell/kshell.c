@@ -100,10 +100,8 @@ static char *kgnl_readline(void)
 
 static void kshell_exec(char *line)
 {
-    if (kstrcmp(line, "CLEAR") == 0) {
+    if (kstrcmp(line, "CLEAR") == 0)
         screen_clear_current();
-        zos();
-    }
     else if (kstrcmp(line, "HELP") == 0)
         printk(0, "commands: CLEAR HELP\n");
 }
