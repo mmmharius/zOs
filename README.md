@@ -81,7 +81,7 @@ zOs/
 │   ├── keyboard.h           scancodes PS/2
 │   ├── screen.h             screen_t, screen_mgr_t, SCR_* flags
 │   ├── stdint.h             uint8_t, uint16_t, uint32_t…
-│   ├── printk/              → printk.a
+│   ├── printk_zOs/          → printk_zOs.a  (submodule)
 │   │   └── README.md
 │   └── libasm_zOs/          → libasm_zOs.a  (submodule)
 │       └── README.md
