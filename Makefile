@@ -1,8 +1,8 @@
 ASM            = nasm
-CC             = gcc
+CC             = cc
 LD             = ld
 ASMFLAGS       = -f elf32
-CFLAGS         = -Wall -Wextra -Werror -m32 -fno-builtin -fno-stack-protector -nostdlib -nodefaultlibs -Iincludes -Iprintk_zOs
+CFLAGS         = -Wall -Wextra -Werror -m32 -fno-builtin -fno-exceptions -fno-stack-protector -fno-rtti -nostdlib -nodefaultlibs -Iincludes -Iprintk_zOs
 LDFLAGS        = -m elf_i386 -T linker.ld
 
 OBJ_DIR        = obj
