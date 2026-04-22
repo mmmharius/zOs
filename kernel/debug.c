@@ -1,8 +1,5 @@
 #include "debug.h"
 
-static char     dbg_key_history[DBG_HISTORY_SIZE];
-static unsigned char dbg_sc_history[DBG_HISTORY_SIZE];
-static int      dbg_history_count = 0;
 
 void print_screen(int id) {
     printk(SERIAL, "SCREEN : %d\n\n", id);
@@ -26,7 +23,8 @@ void debug_print_state(unsigned char sc) {
     screen_t *dbg = &scr.screens[DEBUG_SCREEN_ID];
 
     char key_pressed = scancode_to_ascii(sc);
-    if (!key_pressed) key_pressed = '?';
+    if (!key_pressed)
+        key_pressed = '?';
 
     if (dbg_history_count < DBG_HISTORY_SIZE) {
         dbg_key_history[dbg_history_count] = key_pressed;

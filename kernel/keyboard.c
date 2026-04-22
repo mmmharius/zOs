@@ -93,7 +93,8 @@ void keyboard_loop() {
 
         char c = scancode_to_ascii(sc);
         #ifdef DEBUG
-            debug_print_state(sc);
+            if (scr.mode == SCR_MODE_SPLIT)
+                debug_print_state(sc);
         #endif
         if (c == 0)
             continue;

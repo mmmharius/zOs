@@ -4,14 +4,10 @@ void    zos() {
     #ifdef CORR
         printk(0, "42\n");
     #elif defined(DEBUG)
-        printk(0, "DEBUG VERSION ZZZZZ   OOO   SSSS  DEBUG VERSION\n");
-        printk(0, "DEBUG VERSION    Z   O   O  S     DEBUG VERSION\n");
-        printk(0, "DEBUG VERSION   Z    O   O   SSS  DEBUG VERSION\n");
-        printk(0, "DEBUG VERSION  Z     O   O      S DEBUG VERSION\n");
-        printk(0, "DEBUG VERSION ZZZZZ   OOO   SSSSS DEBUG VERSION\n");
-        print_all_screen();
+        printk(0, "   DEBUG VERSION   \n");
+        // print_all_screen();
     #else
-        printk(0, "ZZZZZ   OOO   SSSS\n");
+        printk(0, "ZZZZZ   OOO   SSSS \n");
         printk(0, "   Z   O   O  S    \n");
         printk(0, "  Z    O   O   SSS \n");
         printk(0, " Z     O   O      S\n");

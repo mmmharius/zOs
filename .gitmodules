@@ -1,6 +1,6 @@
 [submodule "libasm_zOs"]
-	path = libasm_zOs
+	path = lib/libasm_zOs
 	url = https://github.com/mmmharius/libasm_zOs.git
 [submodule "printk_zOs"]
-	path = printk_zOs
+	path = lib/printk_zOs
 	url = https://github.com/mmmharius/printk_zOs.git
