@@ -54,7 +54,6 @@ void keyboard_loop() {
     while (1) {
         unsigned char sc  = read_keyboard();
         unsigned char key = sc & 0x7F;
-
         if (key == KEY_CTRL) {
             ctrl_pressed = !(sc & KEY_RELEASE);
             continue;
@@ -64,11 +63,11 @@ void keyboard_loop() {
 
         if (ctrl_pressed && key == KEY_G) {
             #ifdef DEBUG
-                screen_toggle_split();
+                if (scr.mode == SCR_MODE_NORMAL)
+                    screen_toggle_split();
+                debug_print_state(sc);
             #else
-                char *msg = "debug mode not active : make debug for on...\n";
-                for (int i = 0; msg[i]; i++)
-                    screen_putchar(msg[i], scr.current);
+                printk(0, "debug mode not active : make debug for on...\n");
             #endif
             continue;
         }
@@ -88,12 +87,11 @@ void keyboard_loop() {
 
         if (key == KEY_1) {
             screen_toggle_split();
-            continue;
         }
 
         char c = scancode_to_ascii(sc);
         #ifdef DEBUG
-            if (scr.mode == SCR_MODE_SPLIT)
+            if (DBG_SPLIT == 1)
                 debug_print_state(sc);
         #endif
         if (c == 0)

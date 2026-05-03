@@ -52,8 +52,8 @@ static char *kgnl_readline(void)
                 screen_toggle_split();
             #else
                 printk(0, "debug mode not active : make debug for on...\n");
+                continue;
             #endif
-            continue;
         }
 
         if (key == KEY_TAB) {

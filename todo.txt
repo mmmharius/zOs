@@ -1,0 +1,4 @@
+on split mode CLR cmd erase both screen
+on second split mode can erase " <" of "zos <"
+printk with color
+bug with deletion when on split mode/deletio of cltr g

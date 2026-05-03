@@ -28,7 +28,7 @@ void screen_init() {
 
 void screen_switch(int id) {
     if (id < 0 || id >= MAX_SCREENS || !(scr.screens[id].flags & SCR_ACTIVE)) {
-        #ifdef DEBUG
+        #ifdef DEBUF
             printk(1, "erreur screen switch\n");
         #endif
         return;

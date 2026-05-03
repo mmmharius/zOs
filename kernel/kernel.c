@@ -4,7 +4,7 @@ void    zos() {
     #ifdef CORR
         printk(0, "42\n");
     #elif defined(DEBUG)
-        printk(0, "   DEBUG VERSION   \n");
+        printk(0, "ZOS : DEBUG MODE ON\n");
         // print_all_screen();
     #else
         printk(0, "ZZZZZ   OOO   SSSS \n");

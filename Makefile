@@ -2,7 +2,7 @@ ASM            = nasm
 CC             = cc
 LD             = ld
 ASMFLAGS       = -f elf32
-CFLAGS         = -Wall -Wextra -Werror -m32 -fno-builtin -fno-exceptions -fno-stack-protector -nostdlib -nodefaultlibs -Iincludes -Ilib/printk_zOs
+CFLAGS         = -Wall -Wextra -Werror -m32 -fno-builtin -fno-exceptions -fno-stack-protector -nostdlib -nodefaultlibs -Iincludes/ -Ilib/printk_zOs
 LDFLAGS        = -m elf_i386 -T linker.ld
 
 OBJ_DIR        = obj
@@ -97,7 +97,7 @@ corr: all iso
 	@qemu-system-i386 -cdrom zOs.iso -serial stdio
 
 debug: CFLAGS += -DDEBUG
-debug: $(DEBUG_OBJ_DIR)/boot.o $(DEBUG_OBJS) $(LIBASM_LIB)
+debug: $(DEBUG_OBJ_DIR)/boot.o $(DEBUG_OBJS)
 	@$(MAKE) --no-print-directory -C $(LIB_DIR) fclean
 	@$(MAKE) --no-print-directory -C $(LIB_DIR)
 	$(call run_cmd,$(LD) $(LDFLAGS) -o kernel.bin $(DEBUG_OBJ_DIR)/boot.o $(DEBUG_OBJS) $(LIBS),link   kernel.bin)

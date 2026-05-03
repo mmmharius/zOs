@@ -9,6 +9,7 @@
 #include <printk.h>
 
 #define DBG_HISTORY_SIZE 10
+#define DBG_SPLIT 0
 
 void    print_all_screen();
 void    print_current_screen();

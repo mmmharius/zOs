@@ -21,7 +21,7 @@ static void scr_exit_split(void) {
     screen_refresh();
 }
 
-static void vga_draw_screen(screen_t *s, int id, int col_offset) {
+static void  vga_draw_screen(screen_t *s, int id, int col_offset) {
     volatile uint16_t *vga = (uint16_t *)VGA_ADDR;
     uint16_t           color = get_screen_color(id);
     int                width = col_offset ? VGA_WIDTH / 2 : VGA_WIDTH;
@@ -44,6 +44,8 @@ void screen_refresh() {
 }
 
 /*
+VGA size 80 x 25
+
 vga[0] = (uint16_t)'4' | 0x0F00
 
 (uint16_t)'4' in ASCII  = 0x0034
@@ -51,10 +53,10 @@ attribute (white/black) = 0x0F00
 result                  = 0x0F34
 
 0x0F34 = 0000 1111 0011 0100
-└┬─┘ └┬─┘ └───┬───┘
-            │    │       └─ ASCII character ('4')
-            │    └── foreground color of text
-            └── color of screen behind text
+         └┬─┘ └┬─┘ └───┬───┘
+          │    │       └─ BG
+          │    └── FG
+          └── blink ()
 
     Foreground (lower 4 bits of attribute):
     0xF (or 1111) → white text
@@ -69,11 +71,11 @@ result                  = 0x0F34
 
 void screen_toggle_split() {
     if (scr.mode == SCR_MODE_NORMAL) {
-        #ifdef DEBUG
-            scr_enter_split(scr.current, DEBUG_SCREEN_ID, SCR_DEBUG);
-        #else
+        // #ifdef DEBUG
+            // scr_enter_split(scr.current, DEBUG_SCREEN_ID, SCR_DEBUG);
+        // #else
             scr_enter_split(scr.current, (scr.current + 1) % MAX_SCREENS, 0);
-        #endif
+        // #endif
     } else {
         scr_exit_split();
     }

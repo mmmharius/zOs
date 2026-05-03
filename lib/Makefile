@@ -13,13 +13,10 @@ PRINTK_SRCS = printk_zOs/src/printk.c printk_zOs/src/ft_puthex.c \
 PRINTK_OBJS = $(patsubst printk_zOs/src/%.c,printk_zOs/obj/%.o,$(PRINTK_SRCS))
 PRINTK      = printk_zOs/printk_zOs.a
 
-CLEAN_TARGETS  = libasm_zOs/obj printk_zOs/obj
-FCLEAN_TARGETS = $(CLEAN_TARGETS) $(LIBASM) $(PRINTK)
-
-GREEN  = \033[0;32m
-RED    = \033[0;31m
-BLUE   = \033[0;34m
-RESET  = \033[0m
+GREEN = \033[0;32m
+RED   = \033[0;31m
+BLUE  = \033[0;34m
+RESET = \033[0m
 
 define run_cmd
 	@printf "  $(BLUE)->$(RESET) %-40s" "$(2)"; \
@@ -53,12 +50,12 @@ $(PRINTK): $(PRINTK_OBJS)
 	@ar rcs $@ $(PRINTK_OBJS)
 
 clean:
-	@printf "  $(BLUE)->$(RESET) %-40s $(RED)[DELETED]$(RESET)\n" $(addprefix lib/,$(CLEAN_TARGETS))
-	@rm -rf $(CLEAN_TARGETS)
+	@printf "  $(BLUE)->$(RESET) %-40s $(RED)[DELETED]$(RESET)\n" lib/libasm_zOs/obj lib/printk_zOs/obj
+	@rm -rf libasm_zOs/obj printk_zOs/obj
 
-fclean:
-	@printf "  $(BLUE)->$(RESET) %-40s $(RED)[DELETED]$(RESET)\n" $(addprefix lib/,$(FCLEAN_TARGETS))
-	@rm -rf $(FCLEAN_TARGETS)
+fclean: clean
+	@printf "  $(BLUE)->$(RESET) %-40s $(RED)[DELETED]$(RESET)\n" lib/$(LIBASM) lib/$(PRINTK)
+	@rm -f $(LIBASM) $(PRINTK)
 
 re: fclean all
 
