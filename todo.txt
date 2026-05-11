@@ -2,3 +2,5 @@ on split mode CLR cmd erase both screen
 on second split mode can erase " <" of "zos <"
 printk with color
 bug with deletion when on split mode/deletio of cltr g
+make sur if whe are in screen 1 in with no split mode, do ctrl-g it then put the half wiht diagnostic of debug_print_stats..
+no editavle screen (screen + 1 no access for user of big if when tab...)

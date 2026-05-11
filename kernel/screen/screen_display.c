@@ -10,6 +10,8 @@ static void scr_enter_split(int left, int right, uint8_t right_extra) {
     scr.mode        = SCR_MODE_SPLIT;
     scr.screens[left].flags  |= SCR_SPLIT_L | SCR_RENDERED;
     scr.screens[right].flags |= SCR_SPLIT_R | SCR_RENDERED | right_extra;
+    if (scr.screens[left].col >= VGA_WIDTH / 2)
+        scr.screens[left].col = VGA_WIDTH / 2 - 1;
     split_refresh(left, right);
 }
 
@@ -70,13 +72,17 @@ result                  = 0x0F34
 */
 
 void screen_toggle_split() {
-    if (scr.mode == SCR_MODE_NORMAL) {
-        // #ifdef DEBUG
-            // scr_enter_split(scr.current, DEBUG_SCREEN_ID, SCR_DEBUG);
-        // #else
-            scr_enter_split(scr.current, (scr.current + 1) % MAX_SCREENS, 0);
-        // #endif
-    } else {
+    if (scr.mode == SCR_MODE_NORMAL)
+        scr_enter_split(scr.current, (scr.current + 1) % MAX_SCREENS, 0);
+    else
         scr_exit_split();
-    }
 }
+
+#ifdef DEBUG
+void screen_toggle_debug_split() {
+    if (scr.mode == SCR_MODE_NORMAL)
+        scr_enter_split(scr.current, DEBUG_SCREEN_ID, SCR_DEBUG);
+    else
+        scr_exit_split();
+}
+#endif

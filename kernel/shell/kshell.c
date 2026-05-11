@@ -21,13 +21,16 @@ static int kstrcmp(const char *s1, const char *s2)
 static void screen_clear_current(void)
 {
     screen_t *s = &scr.screens[scr.current];
-
+    int       width = get_width();
     for (int row = s->start_row; row < VGA_HEIGHT; row++)
-        for (int col = 0; col < VGA_WIDTH; col++)
+        for (int col = 0; col < width; col++)
             s->buffer[row * VGA_WIDTH + col] = ' ';
     s->row = s->start_row;
     s->col = 0;
-    screen_refresh();
+    if (scr.mode == SCR_MODE_SPLIT)
+        split_refresh(scr.split_left, scr.split_right);
+    else
+        screen_refresh();
 }
 
 static char *kgnl_readline(void)

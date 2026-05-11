@@ -19,6 +19,10 @@
 
 #define DEBUG_SCREEN_ID 2
 
+#ifdef DEBUG
+    void screen_toggle_debug_split();
+#endif
+
 typedef struct {
     int     row;
     int     col;

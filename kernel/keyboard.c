@@ -91,8 +91,7 @@ void keyboard_loop() {
 
         char c = scancode_to_ascii(sc);
         #ifdef DEBUG
-            if (DBG_SPLIT == 1)
-                debug_print_state(sc);
+            debug_print_state(sc);
         #endif
         if (c == 0)
             continue;
