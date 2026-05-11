@@ -45,6 +45,6 @@ extern int ctrl_pressed;
 
 unsigned char   read_keyboard();
 char            scancode_to_ascii(unsigned char sc);
-void            keyboard_loop();
+void            keyboard_loop(void (*handler)(char));
 
 #endif

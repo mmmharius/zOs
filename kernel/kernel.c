@@ -1,11 +1,10 @@
 #include "kernel.h"
 
-void    zos() {
+void zos(void) {
     #ifdef CORR
         printk(0, "42\n");
     #elif defined(DEBUG)
         printk(0, "ZOS : DEBUG MODE ON\n");
-        // print_all_screen();
     #else
         printk(0, "ZZZZZ   OOO   SSSS \n");
         printk(0, "   Z   O   O  S    \n");
@@ -15,10 +14,9 @@ void    zos() {
     #endif
 }
 
-int main() {
+int main(void) {
     screen_init();
     zos();
     kshell_run();
-    while(1);
-    return 1;
+    return 0;
 }
