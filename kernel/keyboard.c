@@ -68,21 +68,27 @@ void keyboard_loop(void (*handler)(char)) {
                 if (scr.mode == SCR_MODE_SPLIT)
                     debug_print_state(sc);
             #else
-                printk(0, "debug mode not active : make debug for on...\n");
+                printk(1, "debug mode not active : make debug for on...\n");
             #endif
             continue;
         }
 
         if (key == KEY_TAB) {
             if (scr.mode == SCR_MODE_SPLIT) {
-                int other = scr.split_right == scr.current
-                    ? scr.split_left : scr.split_right;
+                int other = scr.split_rt == scr.current
+                    ? scr.split_l : scr.split_rt;
                 if (!(scr.screens[other].flags & SCR_DEBUG)) {
                     scr.current = other;
                     update_cursor();
                 }
             } else {
                 int next = (scr.current + 1) % MAX_SCREENS;
+                #ifdef DEBUG
+                    printk(1, "next=%d, dbg_sc_id=%d", next, DEBUG_SCREEN_ID);
+                #else 
+                    if (next == DEBUG_SCREEN_ID)
+                        next = (scr.current + 1) % MAX_SCREENS;
+                #endif
                 while (scr.screens[next].flags & SCR_DEBUG)
                     next = (next + 1) % MAX_SCREENS;
                 screen_switch(next);

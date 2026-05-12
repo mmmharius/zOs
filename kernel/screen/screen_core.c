@@ -20,21 +20,18 @@ void screen_init() {
     scr.count               = MAX_SCREENS;
     scr.current             = 0;
     scr.mode                = SCR_MODE_NORMAL;
-    scr.split_left          = 0;
-    scr.split_right         = 1;
+    scr.split_l          = 0;
+    scr.split_rt         = 1;
     scr.screens[0].flags   |= SCR_RENDERED;
     screen_refresh();
 }
 
 void screen_switch(int id) {
     if (id < 0 || id >= MAX_SCREENS || !(scr.screens[id].flags & SCR_ACTIVE)) {
-        #ifdef DEBUF
-            printk(1, "erreur screen switch\n");
-        #endif
         return;
     }
     if (scr.mode == SCR_MODE_SPLIT) {
-        split_refresh(scr.split_left, scr.split_right);
+        split_refresh(scr.split_l, scr.split_rt);
     } else {
         scr.screens[scr.current].flags &= ~SCR_RENDERED;
         scr.current = id;

@@ -46,7 +46,7 @@ void debug_print_state(unsigned char sc) {
 
     printk(0, "[KEY PRESS]| key=%c sc=0x%x\n", key_pressed, sc);
     printk(0, "[SCREEN]   | cur=%d mode=%d sp-L=%d sp-R=%d\n",
-        saved, scr.mode, scr.split_left, scr.split_right);
+        saved, scr.mode, scr.split_l, scr.split_rt);
     printk(0, "[CURRENT]  | row=%d col=%d\n",
         scr.screens[saved].row, scr.screens[saved].col);
     printk(0, "[FLAG]     | scr_0=%x scr_1=%x scr_2=%x\n",
@@ -58,5 +58,5 @@ void debug_print_state(unsigned char sc) {
 
     scr.current = saved;
 
-    split_refresh(scr.split_left, scr.split_right);
+    split_refresh(scr.split_l, scr.split_rt);
 }

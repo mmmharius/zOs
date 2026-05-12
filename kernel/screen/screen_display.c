@@ -5,8 +5,8 @@
 #endif
 
 static void scr_enter_split(int left, int right, uint8_t right_extra) {
-    scr.split_left  = left;
-    scr.split_right = right;
+    scr.split_l  = left;
+    scr.split_rt = right;
     scr.mode        = SCR_MODE_SPLIT;
     scr.screens[left].flags  |= SCR_SPLIT_L | SCR_RENDERED;
     scr.screens[right].flags |= SCR_SPLIT_R | SCR_RENDERED | right_extra;
@@ -16,8 +16,8 @@ static void scr_enter_split(int left, int right, uint8_t right_extra) {
 }
 
 static void scr_exit_split(void) {
-    scr.screens[scr.split_left].flags  &= ~(SCR_SPLIT_L | SCR_RENDERED);
-    scr.screens[scr.split_right].flags &= ~(SCR_SPLIT_R | SCR_RENDERED);
+    scr.screens[scr.split_l].flags  &= ~(SCR_SPLIT_L | SCR_RENDERED);
+    scr.screens[scr.split_rt].flags &= ~(SCR_SPLIT_R | SCR_RENDERED);
     scr.screens[scr.current].flags     |= SCR_RENDERED;
     scr.mode = SCR_MODE_NORMAL;
     screen_refresh();

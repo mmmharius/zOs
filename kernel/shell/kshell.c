@@ -30,15 +30,15 @@ static void screen_clear_current(void) {
     s->col = 0;
 
     if (scr.mode == SCR_MODE_SPLIT) {
-        int other = (scr.current == scr.split_left)
-            ? scr.split_right : scr.split_left;
+        int other = (scr.current == scr.split_l)
+            ? scr.split_rt : scr.split_l;
         screen_t *s2 = &scr.screens[other];
         for (int row = s2->start_row; row < VGA_HEIGHT; row++)
             for (int col = 0; col < width; col++)
                 s2->buffer[row * VGA_WIDTH + col] = ' ';
         s2->row = s2->start_row;
         s2->col = 0;
-        split_refresh(scr.split_left, scr.split_right);
+        split_refresh(scr.split_l, scr.split_rt);
     } else
         screen_refresh();
 }

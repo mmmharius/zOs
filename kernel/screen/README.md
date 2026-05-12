@@ -95,12 +95,12 @@ typedef struct {
 } screen_t;
 
 typedef struct {
-    screen_t screens[MAX_SCREENS];  // 4 screens
+    screen_t screens[MAX_SCREENS];  // 5 screens
     int      count;       // 4
     int      current;     // screen actif (0–3)
     int      mode;        // SCR_MODE_NORMAL ou SCR_MODE_SPLIT
-    int      split_left;
-    int      split_right;
+    int      split_l;
+    int      split_rt;
 } screen_mgr_t;
 
 extern screen_mgr_t scr;
@@ -165,7 +165,7 @@ Normal — 80 cols, 1 screen :
 Split — 40 cols chaque :
 
   ┌──────────────────────────────────┬──────────────────────────────────┐
-  │  screen [split_left]             │  screen [split_right]            │
+  │  screen [split_l]             │  screen [split_rt]            │
   │  40 cols                         │  40 cols                         │
   └──────────────────────────────────┴──────────────────────────────────┘
   col 0                             col 40                            col 79
@@ -173,8 +173,8 @@ Split — 40 cols chaque :
 
 Toggle avec `1` :
 ```c
-scr.split_left  = scr.current;
-scr.split_right = (scr.current + 1) % MAX_SCREENS;
+scr.split_l  = scr.current;
+scr.split_rt = (scr.current + 1) % MAX_SCREENS;
 ```
 
 ---
@@ -184,7 +184,7 @@ scr.split_right = (scr.current + 1) % MAX_SCREENS;
 ```c
 int get_vga_pos(int id, int row, int col) {
     if (scr.mode == SCR_MODE_SPLIT) {
-        int offset = (id == scr.split_right) ? VGA_WIDTH / 2 : 0;
+        int offset = (id == scr.split_rt) ? VGA_WIDTH / 2 : 0;
         return row * VGA_WIDTH + col + offset;
     }
     return row * VGA_WIDTH + col;
