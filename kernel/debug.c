@@ -23,7 +23,6 @@ void print_current_screen() {
 
 void debug_print_state(unsigned char sc) {
     screen_t *dbg         = &scr.screens[DEBUG_SCREEN_ID];
-    int       saved       = scr.current;
     char      key_pressed = scancode_to_ascii(sc);
 
     if (!key_pressed)
@@ -42,21 +41,17 @@ void debug_print_state(unsigned char sc) {
     for (int row = 0; row < 4 + DBG_HISTORY_SIZE; row++)
         replace_row(row, DEBUG_SCREEN_ID);
 
-    scr.current = DEBUG_SCREEN_ID;
-
-    printk(0, "[KEY PRESS]| key=%c sc=0x%x\n", key_pressed, sc);
-    printk(0, "[SCREEN]   | cur=%d mode=%d sp-L=%d sp-R=%d\n",
-        saved, scr.mode, scr.split_l, scr.split_rt);
-    printk(0, "[CURRENT]  | row=%d col=%d\n",
-        scr.screens[saved].row, scr.screens[saved].col);
-    printk(0, "[FLAG]     | scr_0=%x scr_1=%x scr_2=%x\n",
+    printk(DEBUG_SCREEN_ID, "[KEY PRESS]| key=%c sc=0x%x\n", key_pressed, sc);
+    printk(DEBUG_SCREEN_ID, "[SCREEN]   | cur=%d mode=%d sp-L=%d sp-R=%d\n",
+        scr.current, scr.mode, scr.split_l, scr.split_r);
+    printk(DEBUG_SCREEN_ID, "[CURRENT]  | row=%d col=%d\n",
+        scr.screens[scr.current].row, scr.screens[scr.current].col);
+    printk(DEBUG_SCREEN_ID, "[FLAG]     | scr_0=%x scr_1=%x scr_2=%x\n",
         scr.screens[0].flags, scr.screens[1].flags, scr.screens[2].flags);
-    printk(0, "[HISTORY]  |");
+    printk(DEBUG_SCREEN_ID, "[HISTORY]  |");
     for (int i = 0; i < dbg_history_count; i++)
-        printk(0, " %c", dbg_key_history[i]);
-    printk(0, "\n");
+        printk(DEBUG_SCREEN_ID, " %c", dbg_key_history[i]);
+    printk(DEBUG_SCREEN_ID, "\n");
 
-    scr.current = saved;
-
-    split_refresh(scr.split_l, scr.split_rt);
+    split_refresh(scr.split_l, scr.split_r);
 }

@@ -75,20 +75,14 @@ void keyboard_loop(void (*handler)(char)) {
 
         if (key == KEY_TAB) {
             if (scr.mode == SCR_MODE_SPLIT) {
-                int other = scr.split_rt == scr.current
-                    ? scr.split_l : scr.split_rt;
+                int other = (scr.current == scr.split_l) ? scr.split_r : scr.split_l;
+
                 if (!(scr.screens[other].flags & SCR_DEBUG)) {
                     scr.current = other;
                     update_cursor();
                 }
             } else {
                 int next = (scr.current + 1) % MAX_SCREENS;
-                #ifdef DEBUG
-                    printk(1, "next=%d, dbg_sc_id=%d", next, DEBUG_SCREEN_ID);
-                #else 
-                    if (next == DEBUG_SCREEN_ID)
-                        next = (scr.current + 1) % MAX_SCREENS;
-                #endif
                 while (scr.screens[next].flags & SCR_DEBUG)
                     next = (next + 1) % MAX_SCREENS;
                 screen_switch(next);
@@ -103,7 +97,8 @@ void keyboard_loop(void (*handler)(char)) {
 
         char c = scancode_to_ascii(sc);
         #ifdef DEBUG
-            debug_print_state(sc);
+            if (scr.mode == SCR_MODE_SPLIT && (scr.screens[scr.split_r].flags & SCR_DEBUG))
+                debug_print_state(sc);
         #endif
         if (c == 0)
             continue;

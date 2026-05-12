@@ -8,6 +8,7 @@
 #define VGA_HEIGHT  25
 #ifdef DEBUG
     #define MAX_SCREENS 5
+    #define DEBUG_SCREEN_ID 4
 #else
     #define MAX_SCREENS 4
 #endif
@@ -20,7 +21,6 @@
     
 #define SCR_MODE_NORMAL 0
 #define SCR_MODE_SPLIT  1
-#define DEBUG_SCREEN_ID 5
 
 #ifdef DEBUG
     void screen_toggle_debug_split();
@@ -40,7 +40,7 @@ typedef struct {
     int         current;
     int         mode;
     int         split_l;
-    int         split_rt;
+    int         split_r;
 } screen_mgr_t;
 
 extern screen_mgr_t scr;

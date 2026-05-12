@@ -11,7 +11,7 @@ int get_width() {
 
 int get_vga_pos(int id, int row, int col) {
     if (scr.mode == SCR_MODE_SPLIT) {
-        int offset = (id == scr.split_rt) ? VGA_WIDTH / 2 : 0;
+        int offset = (id == scr.split_r) ? VGA_WIDTH / 2 : 0;
         return row * VGA_WIDTH + col + offset;
     }
     return row * VGA_WIDTH + col;

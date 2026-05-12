@@ -25,7 +25,7 @@ void screen_putchar(char c, int id) {
     if (s->row >= VGA_HEIGHT) {
         scroll(id);
         if (scr.mode == SCR_MODE_SPLIT)
-            split_refresh(scr.split_l, scr.split_rt);
+            split_refresh(scr.split_l, scr.split_r);
         else
             screen_refresh();
     }

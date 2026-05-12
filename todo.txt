@@ -1,2 +1,0 @@
-when ctrl+g debug_print_stats need to be on the half screen who start at 40 0 and user at 1
-when half screen cltr+g debug debug_print_stats can't be deleted and replaced himself all time a touch is pressed (dont print on all the screen)

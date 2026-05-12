@@ -2,11 +2,12 @@
 #include <color.h>
 #ifdef DEBUG
     #include <printk.h>
+    #include <screen.h>
 #endif
 
 static void scr_enter_split(int left, int right, uint8_t right_extra) {
     scr.split_l  = left;
-    scr.split_rt = right;
+    scr.split_r = right;
     scr.mode        = SCR_MODE_SPLIT;
     scr.screens[left].flags  |= SCR_SPLIT_L | SCR_RENDERED;
     scr.screens[right].flags |= SCR_SPLIT_R | SCR_RENDERED | right_extra;
@@ -17,21 +18,29 @@ static void scr_enter_split(int left, int right, uint8_t right_extra) {
 
 static void scr_exit_split(void) {
     scr.screens[scr.split_l].flags  &= ~(SCR_SPLIT_L | SCR_RENDERED);
-    scr.screens[scr.split_rt].flags &= ~(SCR_SPLIT_R | SCR_RENDERED);
+    scr.screens[scr.split_r].flags &= ~(SCR_SPLIT_R | SCR_RENDERED);
     scr.screens[scr.current].flags     |= SCR_RENDERED;
     scr.mode = SCR_MODE_NORMAL;
     screen_refresh();
 }
 
-static void  vga_draw_screen(screen_t *s, int id, int col_offset) {
+static void vga_draw_screen(screen_t *s, int id, int col_offset) {
     volatile uint16_t *vga = (uint16_t *)VGA_ADDR;
-    uint16_t           color = get_screen_color(id);
-    int                width = col_offset ? VGA_WIDTH / 2 : VGA_WIDTH;
+    uint16_t color = get_screen_color(id);
 
-    for (int row = 0; row < VGA_HEIGHT; row++)
-        for (int col = 0; col < width; col++)
-            vga[row * VGA_WIDTH + col + col_offset] =
+    int width = (scr.mode == SCR_MODE_SPLIT)
+                    ? VGA_WIDTH / 2
+                    : VGA_WIDTH;
+
+    for (int row = 0; row < VGA_HEIGHT; row++) {
+        for (int col = 0; col < width; col++) {
+
+            int dst_col = col + col_offset;
+
+            vga[row * VGA_WIDTH + dst_col] =
                 (uint16_t)s->buffer[row * VGA_WIDTH + col] | color;
+        }
+    }
 }
 
 void split_refresh(int left_id, int right_id) {
@@ -79,10 +88,10 @@ void screen_toggle_split() {
 }
 
 #ifdef DEBUG
-void screen_toggle_debug_split() {
-    if (scr.mode == SCR_MODE_NORMAL)
-        scr_enter_split(scr.current, DEBUG_SCREEN_ID, SCR_DEBUG);
-    else
-        scr_exit_split();
-}
+    void screen_toggle_debug_split() {
+        if (scr.mode == SCR_MODE_NORMAL)
+            scr_enter_split(scr.current, DEBUG_SCREEN_ID, SCR_DEBUG);
+        else
+            scr_exit_split();
+    }
 #endif
