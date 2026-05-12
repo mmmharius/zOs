@@ -81,9 +81,14 @@ result                  = 0x0F34
 */
 
 void screen_toggle_split() {
-    if (scr.mode == SCR_MODE_NORMAL)
-        scr_enter_split(scr.current, (scr.current + 1) % MAX_SCREENS, 0);
-    else
+    if (scr.mode == SCR_MODE_NORMAL) {
+        int right = (scr.current + 1) % MAX_SCREENS;
+        #ifdef DEBUG
+            if (right == DEBUG_SCREEN_ID)
+                right = (right + 1) % MAX_SCREENS;
+        #endif
+        scr_enter_split(scr.current, right, 0);
+    } else
         scr_exit_split();
 }
 

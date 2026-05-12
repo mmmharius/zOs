@@ -25,6 +25,7 @@
 #define SCREEN_1_COLOR VGA_COLOR(L_RED, BLACK)
 #define SCREEN_2_COLOR VGA_COLOR(WHITE, BLACK)
 #define SCREEN_3_COLOR VGA_COLOR(L_GREEN, BLACK)
+#define SCREEN_4_COLOR VGA_COLOR(YELLOW, BLACK)
 
 static inline uint16_t get_screen_color(uint16_t id)
 {
@@ -32,10 +33,11 @@ static inline uint16_t get_screen_color(uint16_t id)
         SCREEN_0_COLOR,
         SCREEN_1_COLOR,
         SCREEN_2_COLOR,
-        SCREEN_3_COLOR
+        SCREEN_3_COLOR,
+        SCREEN_4_COLOR
     };
 
-    return (id < 4) ? colors[id] : SCREEN_0_COLOR;
+    return (id < 5) ? colors[id] : SCREEN_0_COLOR;
 }
 
 #endif
