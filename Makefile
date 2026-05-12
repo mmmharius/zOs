@@ -99,7 +99,7 @@ corr: all iso
 debug: CFLAGS += -DDEBUG
 debug: $(DEBUG_OBJ_DIR)/boot.o $(DEBUG_OBJS)
 	@$(MAKE) --no-print-directory -C $(LIB_DIR) fclean
-	@$(MAKE) --no-print-directory -C $(LIB_DIR)
+	@$(MAKE) --no-print-directory -C $(LIB_DIR) EXTRA_CFLAGS="-DDEBUG"
 	$(call run_cmd,$(LD) $(LDFLAGS) -o kernel.bin $(DEBUG_OBJ_DIR)/boot.o $(DEBUG_OBJS) $(LIBS),link   kernel.bin)
 	@mv kernel.bin isodir/boot/
 	$(call run_cmd,grub-mkrescue -o zOs.iso isodir,iso    zOs.iso)

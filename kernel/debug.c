@@ -36,10 +36,12 @@ void debug_print_state(unsigned char sc) {
         dbg_key_history[DBG_HISTORY_SIZE - 1] = key;
     }
 
+    for (int row = 0; row < 5; row++)
+        for (int col = 0; col < VGA_WIDTH; col++)
+            scr.screens[DEBUG_SCREEN_ID].buffer[row * VGA_WIDTH + col] = ' ';
+
     scr.screens[DEBUG_SCREEN_ID].row = 0;
     scr.screens[DEBUG_SCREEN_ID].col = 0;
-    for (int row = 0; row < 5; row++)
-        replace_row(row, DEBUG_SCREEN_ID);
 
     printk(DBG, "[KEY ] key=%c sc=0x%x\n", key, sc);
     printk(DBG, "[SCR ] cur=%d mode=%d L=%d R=%d\n",

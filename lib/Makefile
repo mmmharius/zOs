@@ -1,7 +1,7 @@
 ASM      = nasm
 CC       = gcc
 ASMFLAGS = -f elf32
-CFLAGS   = -m32 -Wall -Wextra -Werror -fno-builtin -fno-stack-protector -nostdlib -nodefaultlibs -I../includes
+CFLAGS = -m32 -Wall -Wextra -Werror -fno-builtin -fno-stack-protector -nostdlib -nodefaultlibs -I../includes $(EXTRA_CFLAGS)
 
 LIBASM_SRCS = libasm_zOs/ft_strlen.s libasm_zOs/ft_strcpy.s libasm_zOs/ft_strcmp.s
 LIBASM_OBJS = $(patsubst libasm_zOs/%.s,libasm_zOs/obj/%.o,$(LIBASM_SRCS))
