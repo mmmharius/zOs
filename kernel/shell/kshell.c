@@ -51,6 +51,11 @@ static void screen_clear_current(void)
 
 static void kshell_exec(char **argv, int argc)
 {
+    #ifdef DEBUG
+        if (ft_strcmp(argv[0], "PRINT") == 0) {
+            int id       = (argc > 1) ? ft_atoi(argv[1]) : scr.current;
+            int max_rows = (argc > 2) ? ft_atoi(argv[2]) : VGA_HEIGHT;
+        debug_live_print(id, max_rows);
     if (argc == 0)
         return;
 
@@ -59,20 +64,19 @@ static void kshell_exec(char **argv, int argc)
 
     else if (ft_strcmp(argv[0], "HELP") == 0)
     #ifdef DEBUG
-        printk(0, "commands: CLEAR HELP REBOOT PRINT GO\n");
+        printk(0, "CLEAR HELP REBOOT GO EXIT PRINT [id] [rows]\n");
     #else
-        printk(0, "commands: CLEAR HELP REBOOT GO\n");
+        printk(0, "CLEAR HELP REBOOT GO\n");
     #endif
+
+    else if (ft_strcmp(argv[0], "GO") == 0 || ft_strcmp(argv[0], "EXIT") == 0)
+        screen_close_split();
 
     else if (ft_strcmp(argv[0], "REBOOT") == 0)
         outb(0x64, 0xFE);
 
-#ifdef DEBUG
-    else if (ft_strcmp(argv[0], "PRINT") == 0)
-        debug_live_print(argv);
+    }
 #endif
-    else if (ft_strcmp(argv[0], "GO") == 0)
-        screen_close_split();
 
     else
         printk(0, "unknown: %s\n", argv[0]);

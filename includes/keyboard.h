@@ -49,8 +49,24 @@
 #define KEY_9 0x0A
 #define KEY_0 0x0B
 #define KEY_CTRL 0x1D
+#define KEY_MINUS   0x0C
+#define KEY_EQUAL   0x0D
+#define KEY_LBRACE  0x1A
+#define KEY_RBRACE  0x1B
+#define KEY_SEMI    0x27
+#define KEY_QUOTE   0x28
+#define KEY_BSLASH  0x2B
+#define KEY_COMMA   0x33
+#define KEY_DOT     0x34
+#define KEY_SLASH   0x35
+#define KEY_UP    0x48
+#define KEY_DOWN  0x50
+#define KEY_LEFT  0x4B
+#define KEY_RIGHT 0x4D
+#define KEY_GRAVE 0x29
 
 extern int ctrl_pressed;
+extern int shift_pressed;
 
 unsigned char   read_keyboard();
 char            scancode_to_ascii(unsigned char sc);

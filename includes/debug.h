@@ -8,12 +8,12 @@
 #include <io.h>
 #include <printk.h>
 
-#define DBG_HISTORY_SIZE 10
+#define DBG_HISTORY_SIZE 16
 
-void    print_all_screen();
-void    print_current_screen();
+void    print_all_screen(void);
+void    print_current_screen(void);
 void    print_screen(int id);
 void    debug_print_state(unsigned char sc);
-void    debug_live_print(const char *arg);
+void    debug_live_print(int id, int max_rows);
 
 #endif
