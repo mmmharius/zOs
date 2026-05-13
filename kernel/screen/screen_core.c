@@ -19,8 +19,7 @@ void screen_init() {
             scr.screens[i].start_row = (i == 0) ? 5 : 0;
             scr.screens[i].flags = SCR_ACTIVE;
         #endif
-        for (int j = 0; j < VGA_WIDTH * VGA_HEIGHT; j++)
-            scr.screens[i].buffer[j] = ' ';
+        ft_memset(scr.screens[i].buffer, ' ', VGA_WIDTH * VGA_HEIGHT);
     }
     scr.count               = MAX_SCREENS;
     scr.current             = 0;

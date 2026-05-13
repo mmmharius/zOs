@@ -19,7 +19,8 @@ DEBUG_OBJS     = $(patsubst %.c,$(DEBUG_OBJ_DIR)/%.o,$(DEBUG_SRCS))
 LIB_DIR        = lib
 LIBASM_LIB     = $(LIB_DIR)/libasm_zOs/libasm_zOs.a
 PRINTK_LIB     = $(LIB_DIR)/printk_zOs/printk_zOs.a
-LIBS           = $(PRINTK_LIB) $(LIBASM_LIB)
+LIBFT_LIB  = $(LIB_DIR)/libft_zOs/libft_zOs.a
+LIBS       = $(PRINTK_LIB) $(LIBASM_LIB) $(LIBFT_LIB)
 
 CLEAN_TARGETS  = $(OBJ_DIR) isodir/boot/kernel.bin
 FCLEAN_TARGETS = $(OBJ_DIR) isodir/boot/kernel.bin kernel.bin zOs.iso
@@ -42,7 +43,7 @@ define run_cmd
 endef
 
 check_submodules:
-	@if [ ! -e lib/printk_zOs/.git ] || [ ! -e lib/libasm_zOs/.git ]; then \
+	@if [ ! -e lib/printk_zOs/.git ] ||  [ ! -e lib/libasm_zOs/.git ] || [ ! -e lib/libft_zOs/.git ]; then \
 		printf "\n$(RED)$(BOLD)Submodules not found in lib/$(RESET)\n"; \
 		printf "\n$(BLUE)Initializing submodules...\n$(RESET)"; \
 		git submodule update --init --recursive; \

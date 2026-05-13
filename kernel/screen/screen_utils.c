@@ -1,5 +1,6 @@
 #include <screen.h>
 #include <io.h>
+#include <libc.h>
 #ifdef DEBUG
     #include <printk.h>
     #include <debug.h>
@@ -27,24 +28,17 @@ void update_cursor() {
     outb(0x3D5, (uint8_t)((pos >> 8) & 0xFF));
 }
 
-
 void replace_row(int row, int id) {
-    screen_t *s     = &scr.screens[id];
-    int       width = get_width();
-    for (int col = 0; col < width; col++)
-        s->buffer[row * VGA_WIDTH + col] = ' ';
+    ft_memset(&scr.screens[id].buffer[row * VGA_WIDTH], ' ', VGA_WIDTH);
 }
 
 void scroll(int id) {
     screen_t *s     = &scr.screens[id];
-    int       width = get_width();
+    int protected   = s->start_row * VGA_WIDTH;
+    int total       = VGA_WIDTH * VGA_HEIGHT;
 
-    for (int row = s->start_row; row < VGA_HEIGHT - 1; row++)
-        for (int col = 0; col < width; col++)
-            s->buffer[row * VGA_WIDTH + col] =
-                s->buffer[(row + 1) * VGA_WIDTH + col];
-
-    replace_row(VGA_HEIGHT - 1, id);
+    ft_memmove(s->buffer + protected,s->buffer + protected + VGA_WIDTH, total - protected - VGA_WIDTH);
+    ft_memset(s->buffer + total - VGA_WIDTH, ' ', VGA_WIDTH); 
     s->row = VGA_HEIGHT - 1;
     s->col = 0;
 }

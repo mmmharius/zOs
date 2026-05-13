@@ -2,59 +2,94 @@
 #include <keyboard.h>
 #include <stdint.h>
 #include <printk.h>
+#include <libc.h>
+#include "kshell.h"
 #ifdef DEBUG
     #include <debug.h>
 #endif
-#include "kshell.h"
 
-#define KSHELL_BUFSIZE 256
-#define PROMPT         "zOs> "
+#define KSHELL_BUFSIZE  256
+#define KSHELL_MAX_ARGS 8
+#define PROMPT          "zOs> "
+
+int   ft_strcmp(const char *s1, const char *s2);
+int   ft_strlen(const char *s);
+char *ft_strcpy(char *dst, const char *src);
 
 static char buf[KSHELL_BUFSIZE];
 static int  len = 0;
 
-static int kstrcmp(const char *s1, const char *s2) {
-    while (*s1 && *s1 == *s2)
-        s1++, s2++;
-    return (unsigned char)*s1 - (unsigned char)*s2;
+static int kshell_split(char *line, char **argv, int max)
+{
+    int argc = 0;
+    int i    = 0;
+
+    while (line[i] && argc < max) {
+        while (line[i] == ' ')
+            i++;
+        if (!line[i])
+            break;
+        argv[argc++] = &line[i];
+        while (line[i] && line[i] != ' ')
+            i++;
+        if (line[i])
+            line[i++] = '\0';
+    }
+    argv[argc] = 0;
+    return argc;
 }
 
-static void screen_clear_current(void) {
+static void screen_clear_current(void)
+{
     screen_t *s     = &scr.screens[scr.current];
     int       width = get_width();
 
-    for (int row = s->start_row; row < VGA_HEIGHT; row++)
-        for (int col = 0; col < width; col++)
-            s->buffer[row * VGA_WIDTH + col] = ' ';
+    ft_memset(s->buffer + s->start_row * VGA_WIDTH, ' ', (VGA_HEIGHT - s->start_row) * VGA_WIDTH);
     s->row = s->start_row;
     s->col = 0;
 
-    if (scr.mode == SCR_MODE_SPLIT) {
-        int other = (scr.current == scr.split_l) ? scr.split_r : scr.split_l;
-        screen_t *s2 = &scr.screens[other];
-        for (int row = s2->start_row; row < VGA_HEIGHT; row++)
-            for (int col = 0; col < width; col++)
-                s2->buffer[row * VGA_WIDTH + col] = ' ';
-        s2->row = s2->start_row;
-        s2->col = 0;
+    if (scr.mode == SCR_MODE_SPLIT)
         split_refresh(scr.split_l, scr.split_r);
-    } else
+    else
         screen_refresh();
 }
 
-static void kshell_exec(char *line) {
-    if (kstrcmp(line, "CLEAR") == 0)
+static void kshell_exec(char **argv, int argc)
+{
+    if (argc == 0)
+        return;
+
+    if (ft_strcmp(argv[0], "CLEAR") == 0)
         screen_clear_current();
-    else if (kstrcmp(line, "HELP") == 0)
-        printk(0, "commands: CLEAR HELP\n");
+
+    else if (ft_strcmp(argv[0], "HELP") == 0)
+        printk(0, "commands: CLEAR HELP REBOOT"
+               #ifdef DEBUG
+               " PRINT"
+               #endif
+               "\n");
+
+    else if (ft_strcmp(argv[0], "REBOOT") == 0)
+        outb(0x64, 0xFE);
+
+#ifdef DEBUG
+    else if (ft_strcmp(argv[0], "PRINT") == 0)
+        debug_live_print(argc > 1 ? argv[1] : 0);
+#endif
+
+    else
+        printk(0, "unknown: %s\n", argv[0]);
 }
 
-static void kshell_handler(char c) {
+static void kshell_handler(char c)
+{
     if (c == '\n') {
         screen_putchar('\n', scr.current);
         buf[len] = '\0';
         len = 0;
-        kshell_exec(buf);
+        char *argv[KSHELL_MAX_ARGS + 1];
+        int   argc = kshell_split(buf, argv, KSHELL_MAX_ARGS);
+        kshell_exec(argv, argc);
         printk(0, PROMPT);
     } else if (c == '\b') {
         if (len > 0) {
