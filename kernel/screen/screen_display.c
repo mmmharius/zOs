@@ -92,6 +92,21 @@ void screen_toggle_split() {
         scr_exit_split();
 }
 
+void screen_open_split(int right_id) {
+    if (scr.mode == SCR_MODE_SPLIT)
+        scr_exit_split();
+    int left = scr.current;
+    scr_enter_split(left, right_id, SCR_DEBUG);
+    scr.current = left;
+    update_cursor();
+}
+
+void    screen_close_split(void) {
+        if (scr.mode != SCR_MODE_SPLIT)
+        return;
+    scr_exit_split();
+}
+
 #ifdef DEBUG
     void screen_toggle_debug_split() {
         if (scr.mode == SCR_MODE_NORMAL)

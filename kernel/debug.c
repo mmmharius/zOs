@@ -63,14 +63,29 @@ void debug_print_state(unsigned char sc) {
     split_refresh(scr.split_l, scr.split_r);
 }
 
-void debug_live_print(const char *arg) {
+void debug_live_print(const char **arg) {
     if (!arg) {
-        printk(SERIAL, "[PRINT] no arg\n");
+        printk(SERIAL, "[PRINT] no arg — usage: PRINT [0-4] [0-1]\n");
+        printk(SERIAL, "[PRINT] help if you want");
         return;
     }
-    if (arg[0] >= '0' && arg[0] <= '3' && arg[1] == '\0') {
-        print_screen(arg[0] - '0');
+    if (a)
+    if (arg[0] < '0' || arg[0] > '4' || arg[1] != '\0'  || arg[1] < '0' || arg[2] > '1' || arg[3] != '\0') {
+        printk(0, "[PRINT] unknown arg: %s\n", arg);
         return;
     }
-    printk(SERIAL, "[PRINT] %s\n", arg);
+
+    int       id  = arg[0] - '0';
+    screen_t *dbg = &scr.screens[DEBUG_SCREEN_ID];
+    screen_t *src = &scr.screens[id];
+
+
+    // copie le contenu du screen demandé dans le debug screen, row par row
+    // 10 cols seulement — c'est tout ce qui est visible en split
+    for (int row = 0; row < VGA_HEIGHT - 5 && row < VGA_HEIGHT; row++)
+        ft_memcpy(dbg->buffer + (5 + row) * VGA_WIDTH, src->buffer + row * VGA_WIDTH, VGA_WIDTH / 2);
+
+    // ouvre le split avec debug screen à droite (read-only, jaune)
+    screen_open_split(DEBUG_SCREEN_ID);
+    split_refresh(scr.split_l, scr.split_r);
 }

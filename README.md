@@ -49,7 +49,7 @@ QEMU is lunch `-serial stdio` → `printk(SERIAL, ...)` output to the terminal.
 |-------------|-----------------------------------------------------|
 | `Tab`       | Next Screen (normal mode)                           |
 | `Tab`       | Switch to split mode/normal mode                    |
-| `1`         | Toggle split view                                   |
+| `Cltr+1`    | Toggle split view                                   |
 | `Ctrl+G`    | Toggle debug panel (`make debug` need)              |
 | `Backspace` | Like a normal backspace just delete...              |
 | `Enter`     | New ligne                                           |

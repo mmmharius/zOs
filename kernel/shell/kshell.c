@@ -58,19 +58,21 @@ static void kshell_exec(char **argv, int argc)
         screen_clear_current();
 
     else if (ft_strcmp(argv[0], "HELP") == 0)
-        printk(0, "commands: CLEAR HELP REBOOT"
-               #ifdef DEBUG
-               " PRINT"
-               #endif
-               "\n");
+    #ifdef DEBUG
+        printk(0, "commands: CLEAR HELP REBOOT PRINT GO\n");
+    #else
+        printk(0, "commands: CLEAR HELP REBOOT GO\n");
+    #endif
 
     else if (ft_strcmp(argv[0], "REBOOT") == 0)
         outb(0x64, 0xFE);
 
 #ifdef DEBUG
     else if (ft_strcmp(argv[0], "PRINT") == 0)
-        debug_live_print(argc > 1 ? argv[1] : 0);
+        debug_live_print(argv);
 #endif
+    else if (ft_strcmp(argv[0], "GO") == 0)
+        screen_close_split();
 
     else
         printk(0, "unknown: %s\n", argv[0]);

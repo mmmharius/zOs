@@ -17,6 +17,15 @@ unsigned char read_keyboard(void) {
 char scancode_to_ascii(unsigned char sc) {
     switch (sc) {
         case KEY_1:         return '1';
+        case KEY_2:         return '2';
+        case KEY_3:         return '3';
+        case KEY_4:         return '4';
+        case KEY_5:         return '5';
+        case KEY_6:         return '6';
+        case KEY_7:         return '7';
+        case KEY_8:         return '8';
+        case KEY_9:         return '9';
+        case KEY_0:         return '0';
         case KEY_Q:         return 'Q';
         case KEY_W:         return 'W';
         case KEY_E:         return 'E';
@@ -90,19 +99,19 @@ void keyboard_loop(void (*handler)(char)) {
             continue;
         }
 
-        if (key == KEY_1) {
+        if (ctrl_pressed && key == KEY_1) {
             screen_toggle_split();
             continue;
         }
 
         char c = scancode_to_ascii(sc);
-        #ifdef DEBUG
-            if (scr.mode == SCR_MODE_SPLIT && (scr.screens[scr.split_r].flags & SCR_DEBUG))
-                debug_print_state(sc);
-        #endif
         if (c == 0)
             continue;
         if (handler)
             handler(c);
+        #ifdef DEBUG
+            if (scr.mode == SCR_MODE_SPLIT && (scr.screens[scr.split_r].flags & SCR_DEBUG))
+                debug_print_state(sc);
+        #endif
     }
 }

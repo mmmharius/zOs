@@ -22,9 +22,6 @@
 #define SCR_MODE_NORMAL 0
 #define SCR_MODE_SPLIT  1
 
-#ifdef DEBUG
-    void screen_toggle_debug_split();
-#endif
 
 typedef struct {
     int     row;
@@ -48,6 +45,11 @@ extern screen_mgr_t scr;
 void    screen_init();
 void    screen_switch(int id);
 void    screen_toggle_split();
+void    screen_open_split(int right_id);
+void    screen_close_split(void);
+#ifdef DEBUG
+    void screen_toggle_debug_split();
+#endif
 void    screen_putchar(char c, int id);
 void    screen_backspace();
 void    screen_refresh();
