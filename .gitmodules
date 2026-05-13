@@ -4,3 +4,6 @@
 [submodule "printk_zOs"]
 	path = lib/printk_zOs
 	url = https://github.com/mmmharius/printk_zOs.git
+[submodule "lib/libc_zOs"]
+	path = lib/libc_zOs
+	url = https://github.com/mmmharius/libc_zOs.git
