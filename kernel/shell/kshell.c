@@ -12,10 +12,6 @@
 #define KSHELL_MAX_ARGS 8
 #define PROMPT          "zOs> "
 
-int   ft_strcmp(const char *s1, const char *s2);
-int   ft_strlen(const char *s);
-char *ft_strcpy(char *dst, const char *src);
-
 static char buf[KSHELL_BUFSIZE];
 static int  len = 0;
 
@@ -42,7 +38,6 @@ static int kshell_split(char *line, char **argv, int max)
 static void screen_clear_current(void)
 {
     screen_t *s     = &scr.screens[scr.current];
-    int       width = get_width();
 
     ft_memset(s->buffer + s->start_row * VGA_WIDTH, ' ', (VGA_HEIGHT - s->start_row) * VGA_WIDTH);
     s->row = s->start_row;

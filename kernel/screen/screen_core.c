@@ -1,6 +1,7 @@
 #include <screen.h>
 #include <color.h>
 #include <io.h>
+#include <libc.h>
 #ifdef DEBUG
     #include <printk.h>
 #endif

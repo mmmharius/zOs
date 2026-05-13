@@ -19,8 +19,8 @@ DEBUG_OBJS     = $(patsubst %.c,$(DEBUG_OBJ_DIR)/%.o,$(DEBUG_SRCS))
 LIB_DIR        = lib
 LIBASM_LIB     = $(LIB_DIR)/libasm_zOs/libasm_zOs.a
 PRINTK_LIB     = $(LIB_DIR)/printk_zOs/printk_zOs.a
-LIBFT_LIB  = $(LIB_DIR)/libft_zOs/libft_zOs.a
-LIBS       = $(PRINTK_LIB) $(LIBASM_LIB) $(LIBFT_LIB)
+LIBC_LIB  = $(LIB_DIR)/libc_zOs/libc_zOs.a
+LIBS       = $(PRINTK_LIB) $(LIBASM_LIB) $(LIBC_LIB)
 
 CLEAN_TARGETS  = $(OBJ_DIR) isodir/boot/kernel.bin
 FCLEAN_TARGETS = $(OBJ_DIR) isodir/boot/kernel.bin kernel.bin zOs.iso
@@ -43,7 +43,7 @@ define run_cmd
 endef
 
 check_submodules:
-	@if [ ! -e lib/printk_zOs/.git ] ||  [ ! -e lib/libasm_zOs/.git ] || [ ! -e lib/libft_zOs/.git ]; then \
+	@if [ ! -e lib/printk_zOs/.git ] ||  [ ! -e lib/libasm_zOs/.git ] || [ ! -e lib/libc_zOs/.git ]; then \
 		printf "\n$(RED)$(BOLD)Submodules not found in lib/$(RESET)\n"; \
 		printf "\n$(BLUE)Initializing submodules...\n$(RESET)"; \
 		git submodule update --init --recursive; \
@@ -92,20 +92,26 @@ run: iso
 	@printf "\n $(BLUE)$(BOLD)Booting zOs in QEMU...$(RESET)\n\n"
 	@qemu-system-i386 -cdrom zOs.iso -serial stdio
 
-corr: CFLAGS += -DCORR
-corr: all iso
+corr: fclean check_submodules banner
+	@$(MAKE) --no-print-directory \
+		CFLAGS="$(CFLAGS) -DCORR" \
+		_build_iso
 	@printf "\n $(BLUE)$(BOLD)Booting zOs (CORR)...$(RESET)\n\n"
 	@qemu-system-i386 -cdrom zOs.iso -serial stdio
 
-debug: CFLAGS += -DDEBUG
-debug: $(DEBUG_OBJ_DIR)/boot.o $(DEBUG_OBJS)
+debug: fclean check_submodules banner
 	@$(MAKE) --no-print-directory -C $(LIB_DIR) fclean
 	@$(MAKE) --no-print-directory -C $(LIB_DIR) EXTRA_CFLAGS="-DDEBUG"
-	$(call run_cmd,$(LD) $(LDFLAGS) -o kernel.bin $(DEBUG_OBJ_DIR)/boot.o $(DEBUG_OBJS) $(LIBS),link   kernel.bin)
-	@mv kernel.bin isodir/boot/
-	$(call run_cmd,grub-mkrescue -o zOs.iso isodir,iso    zOs.iso)
+	@$(MAKE) --no-print-directory \
+		CFLAGS="$(CFLAGS) -DDEBUG" \
+		SRCS="$(DEBUG_SRCS)" \
+		OBJS="$(DEBUG_OBJS)" \
+		OBJ_DIR="$(DEBUG_OBJ_DIR)" \
+		_build_iso
 	@printf "\n $(BLUE)$(BOLD)Booting zOs (DEBUG)...$(RESET)\n\n"
 	@qemu-system-i386 -cdrom zOs.iso -serial stdio
+
+_build_iso: lib_build kernel.bin iso
 
 clean:
 	@printf "\n$(RED)$(BOLD)                 zOs clean system$(RESET)\n"

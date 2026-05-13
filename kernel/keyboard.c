@@ -2,8 +2,8 @@
 #include <screen.h>
 #include <stdint.h>
 #include <io.h>
+#include <printk.h>
 #ifdef DEBUG
-    #include <printk.h>
     #include <debug.h>
 #endif
 
