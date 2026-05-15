@@ -37,9 +37,10 @@ static int kshell_split(char *line, char **argv, int max)
 
 static void screen_clear_current(void)
 {
-    screen_t *s     = &scr.screens[scr.current];
+    screen_t *s = &scr.screens[scr.current];
 
-    ft_memset(s->buffer + s->start_row * VGA_WIDTH, ' ', (VGA_HEIGHT - s->start_row) * VGA_WIDTH);
+    ft_memset(s->buffer + s->start_row * VGA_WIDTH, ' ',
+              (VGA_HEIGHT - s->start_row) * VGA_WIDTH);
     s->row = s->start_row;
     s->col = 0;
 
@@ -51,30 +52,31 @@ static void screen_clear_current(void)
 
 static void kshell_exec(char **argv, int argc)
 {
-    #ifdef DEBUG
-        if (ft_strcmp(argv[0], "PRINT") == 0) {
-            int id       = (argc > 1) ? ft_atoi(argv[1]) : scr.current;
-            int max_rows = (argc > 2) ? ft_atoi(argv[2]) : VGA_HEIGHT;
-        debug_live_print(id, max_rows);
     if (argc == 0)
         return;
 
-    if (ft_strcmp(argv[0], "CLEAR") == 0)
+    if (ft_strcmp(argv[0], "clear") == 0)
         screen_clear_current();
 
-    else if (ft_strcmp(argv[0], "HELP") == 0)
-    #ifdef DEBUG
-        printk(0, "CLEAR HELP REBOOT GO EXIT PRINT [id] [rows]\n");
-    #else
-        printk(0, "CLEAR HELP REBOOT GO\n");
-    #endif
+    else if (ft_strcmp(argv[0], "help") == 0) {
+        #ifdef DEBUG
+            printk(0, "clear help reboot go exit print [id] [rows]\n");
+        #else
+            printk(0, "clear help reboot go\n");
+        #endif
+    }
 
-    else if (ft_strcmp(argv[0], "GO") == 0 || ft_strcmp(argv[0], "EXIT") == 0)
-        screen_close_split();
-
-    else if (ft_strcmp(argv[0], "REBOOT") == 0)
+    else if (ft_strcmp(argv[0], "reboot") == 0)
         outb(0x64, 0xFE);
 
+    else if (ft_strcmp(argv[0], "go") == 0 || ft_strcmp(argv[0], "exit") == 0)
+        screen_close_split();
+
+#ifdef DEBUG
+    else if (ft_strcmp(argv[0], "print") == 0) {
+        int id       = (argc > 1) ? ft_atoi(argv[1]) : scr.current;
+        int max_rows = (argc > 2) ? ft_atoi(argv[2]) : VGA_HEIGHT;
+        debug_live_print(id, max_rows);
     }
 #endif
 

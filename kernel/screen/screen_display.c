@@ -6,17 +6,18 @@
 
 static int saved_col = -1;
 
-static void vga_clear_right_half(void) {
+/* clear entire VGA (80 cols) with black/gray space */
+static void vga_clear_all(void) {
     volatile uint16_t *vga = (uint16_t *)VGA_ADDR;
-    for (int row = 0; row < VGA_HEIGHT; row++)
-        for (int col = VGA_WIDTH / 2; col < VGA_WIDTH; col++)
-            vga[row * VGA_WIDTH + col] = ' ' | 0x0700;
+    for (int i = 0; i < VGA_WIDTH * VGA_HEIGHT; i++)
+        vga[i] = ' ' | 0x0700;
 }
 
 static void scr_enter_split(int left, int right, uint8_t right_extra) {
     scr.split_l  = left;
     scr.split_r  = right;
     scr.mode     = SCR_MODE_SPLIT;
+    scr.current  = left;
     scr.screens[left].flags  |= SCR_SPLIT_L | SCR_RENDERED;
     scr.screens[right].flags |= SCR_SPLIT_R | SCR_RENDERED | right_extra;
     if (scr.screens[left].col >= VGA_WIDTH / 2) {
@@ -29,22 +30,26 @@ static void scr_enter_split(int left, int right, uint8_t right_extra) {
 }
 
 static void scr_exit_split(void) {
+    int cur = scr.current;
+
     scr.screens[scr.split_l].flags &= ~(SCR_SPLIT_L | SCR_RENDERED);
     scr.screens[scr.split_r].flags &= ~(SCR_SPLIT_R | SCR_RENDERED);
-    scr.screens[scr.current].flags |= SCR_RENDERED;
     scr.mode = SCR_MODE_NORMAL;
+    scr.screens[cur].flags |= SCR_RENDERED;
+
     if (saved_col != -1) {
-        scr.screens[scr.current].col = saved_col;
+        scr.screens[cur].col = saved_col;
         saved_col = -1;
     }
-    vga_clear_right_half();
+
+    /* wipe entire VGA first so no split ghost remains */
+    vga_clear_all();
     screen_refresh();
 }
 
 static void vga_draw_screen(screen_t *s, int id, int col_offset) {
     volatile uint16_t *vga = (uint16_t *)VGA_ADDR;
     uint16_t color = get_screen_color(id);
-
     int width = (scr.mode == SCR_MODE_SPLIT) ? VGA_WIDTH / 2 : VGA_WIDTH;
 
     for (int row = 0; row < VGA_HEIGHT; row++)

@@ -93,22 +93,12 @@ void keyboard_loop(void (*handler)(char)) {
         if (sc & KEY_RELEASE)
             continue;
 
-        if (ctrl_pressed && key == KEY_G) {
-            #ifdef DEBUG
-                screen_toggle_debug_split();
-                if (scr.mode == SCR_MODE_SPLIT)
-                    debug_print_state(sc);
-            #else
-                printk(1, "debug mode not active : make debug\n");
-            #endif
-            continue;
-        }
-
+        
         if (key == KEY_TAB) {
             #ifdef DEBUG
                 if (scr.mode == SCR_MODE_SPLIT &&
                     (scr.screens[scr.split_r].flags & SCR_DEBUG)) {
-                    screen_toggle_debug_split();
+                    screen_close_split();
                     continue;
                 }
             #endif
@@ -125,6 +115,22 @@ void keyboard_loop(void (*handler)(char)) {
                     next = (next + 1) % MAX_SCREENS;
                 screen_switch(next);
             }
+            continue;
+        }
+        
+        if (ctrl_pressed && key == KEY_G) {
+            #ifdef DEBUG
+                if (scr.mode == SCR_MODE_SPLIT &&
+                    (scr.screens[scr.split_r].flags & SCR_DEBUG)) {
+                    screen_close_split();
+                } else {
+                    screen_toggle_debug_split();
+                    if (scr.mode == SCR_MODE_SPLIT)
+                        debug_print_state(sc);
+                }
+            #else
+                printk(1, "debug mode not active : make debug\n");
+            #endif
             continue;
         }
 
