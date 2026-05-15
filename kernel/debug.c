@@ -4,7 +4,6 @@
 static int  dbg_history_count = 0;
 static char dbg_key_history[DBG_HISTORY_SIZE];
 
-
 void print_screen(int id) {
     printk(SERIAL, "SCREEN : %d\n\n", id);
     for (int row = 0; row < VGA_HEIGHT; row++) {
@@ -34,32 +33,13 @@ static int buf_used(screen_t *s) {
 
 static void flags_str(uint8_t f, char *out) {
     int i = 0;
-    if (f & SCR_ACTIVE)   
-        out[i++] = 'A';
-    if (f & SCR_RENDERED) 
-        out[i++] = 'R';
-    if (f & SCR_DEBUG)    
-        out[i++] = 'D';
-    if (f & SCR_SPLIT_L)  
-        out[i++] = 'L';
-    if (f & SCR_SPLIT_R)  
-        out[i++] = 'R';
+    if (f & SCR_ACTIVE)   out[i++] = 'A';
+    if (f & SCR_RENDERED) out[i++] = 'R';
+    if (f & SCR_DEBUG)    out[i++] = 'D';
+    if (f & SCR_SPLIT_L)  out[i++] = 'L';
+    if (f & SCR_SPLIT_R)  out[i++] = 'R';
     out[i] = '\0';
 }
-
-/* ── debug_print_state ────────────────────────────────────────────── */
-/*
-   Layout (rows 0–7 of debug screen, 40 cols in split mode):
-
-   row 0: ╔═[zOs DEBUG]══════════════╗
-   row 1: ║ KEY 'a'  sc=0x1E  asc=97 ║
-   row 2: ║ SCR cur=0  SPLIT  L=0 R=4║
-   row 3: ║ POS row=7 col=3 w=40     ║
-   row 4: ║ FLG [0]=AR [1]=A [2]=AD  ║
-   row 5: ║ BUF used=320 free=1680   ║
-   row 6: ║ HST h e l l o z o s >    ║
-   row 7: ╚══════════════════════════╝
-*/
 
 void debug_print_state(unsigned char sc) {
     screen_t *dbg   = &scr.screens[DEBUG_SCREEN_ID];
@@ -109,7 +89,8 @@ void debug_print_state(unsigned char sc) {
     printk(0, "\n");
 
     printk(0, "+==============================+\n");
-    
+
+    scr.current = saved;
     split_refresh(scr.split_l, scr.split_r);
 }
 
@@ -124,24 +105,23 @@ void debug_live_print(int id, int max_rows) {
     screen_t *dbg = &scr.screens[DEBUG_SCREEN_ID];
     screen_t *src = &scr.screens[id];
 
-    /* clear print zone (rows 8 to end) */
     ft_memset(dbg->buffer + 8 * VGA_WIDTH, ' ', (VGA_HEIGHT - 8) * VGA_WIDTH);
 
-    /* copy rows */
     int copy_rows = max_rows;
     if (copy_rows > VGA_HEIGHT - 8)
         copy_rows = VGA_HEIGHT - 8;
 
     for (int row = 0; row < copy_rows; row++)
-        ft_memcpy(
-            dbg->buffer + (8 + row) * VGA_WIDTH,
-            src->buffer + row * VGA_WIDTH,
-            VGA_WIDTH / 2   /* only left half visible in split */
-        );
+        for (int col = 0; col < VGA_WIDTH / 2; col++)
+            dbg->buffer[(8 + row) * VGA_WIDTH + col] =
+                src->buffer[row * VGA_WIDTH + col];
 
     if (!(scr.mode == SCR_MODE_SPLIT &&
           (scr.screens[scr.split_r].flags & SCR_DEBUG))) {
+        int saved = scr.current;
         screen_open_split(DEBUG_SCREEN_ID);
+        scr.current = saved;
+        update_cursor();
     }
 
     split_refresh(scr.split_l, scr.split_r);

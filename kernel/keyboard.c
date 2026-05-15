@@ -9,6 +9,7 @@
 
 int ctrl_pressed = 0;
 int shift_pressed = 0;
+
 unsigned char read_keyboard(void) {
     while ((inb(KB_STATUS) & 1) == 0);
     return inb(KB_DATA);
@@ -17,7 +18,6 @@ unsigned char read_keyboard(void) {
 char scancode_to_ascii(unsigned char sc) {
     int s = shift_pressed;
     switch (sc) {
-
         case KEY_1:         return s ? '!' : '1';
         case KEY_2:         return s ? '@' : '2';
         case KEY_3:         return s ? '#' : '3';
@@ -28,7 +28,6 @@ char scancode_to_ascii(unsigned char sc) {
         case KEY_8:         return s ? '*' : '8';
         case KEY_9:         return s ? '(' : '9';
         case KEY_0:         return s ? ')' : '0';
-
         case KEY_Q:         return s ? 'Q' : 'q';
         case KEY_W:         return s ? 'W' : 'w';
         case KEY_E:         return s ? 'E' : 'e';
@@ -55,7 +54,6 @@ char scancode_to_ascii(unsigned char sc) {
         case KEY_B:         return s ? 'B' : 'b';
         case KEY_N:         return s ? 'N' : 'n';
         case KEY_M:         return s ? 'M' : 'm';
-
         case KEY_MINUS:     return s ? '_' : '-';
         case KEY_EQUAL:     return s ? '+' : '=';
         case KEY_LBRACE:    return s ? '{' : '[';
@@ -70,7 +68,6 @@ char scancode_to_ascii(unsigned char sc) {
         case KEY_ENTER:     return '\n';
         case KEY_BACKSPACE: return '\b';
         case KEY_SPACE:     return ' ';
-
         default:            return 0;
     }
 }
@@ -93,18 +90,15 @@ void keyboard_loop(void (*handler)(char)) {
         if (sc & KEY_RELEASE)
             continue;
 
-        
         if (key == KEY_TAB) {
             #ifdef DEBUG
-                if (scr.mode == SCR_MODE_SPLIT &&
-                    (scr.screens[scr.split_r].flags & SCR_DEBUG)) {
-                    screen_close_split();
-                    continue;
-                }
+            if (scr.mode == SCR_MODE_SPLIT && (scr.screens[scr.split_r].flags & SCR_DEBUG)) {
+                screen_close_split();
+                continue;
+            }
             #endif
             if (scr.mode == SCR_MODE_SPLIT) {
                 int other = (scr.current == scr.split_l) ? scr.split_r : scr.split_l;
-
                 if (!(scr.screens[other].flags & SCR_DEBUG)) {
                     scr.current = other;
                     update_cursor();
@@ -117,19 +111,18 @@ void keyboard_loop(void (*handler)(char)) {
             }
             continue;
         }
-        
+
         if (ctrl_pressed && key == KEY_G) {
             #ifdef DEBUG
-                if (scr.mode == SCR_MODE_SPLIT &&
-                    (scr.screens[scr.split_r].flags & SCR_DEBUG)) {
-                    screen_close_split();
-                } else {
-                    screen_toggle_debug_split();
-                    if (scr.mode == SCR_MODE_SPLIT)
-                        debug_print_state(sc);
-                }
+            if (scr.mode == SCR_MODE_SPLIT && (scr.screens[scr.split_r].flags & SCR_DEBUG)) {
+                screen_close_split();
+            } else {
+                screen_toggle_debug_split();
+                if (scr.mode == SCR_MODE_SPLIT)
+                    debug_print_state(sc);
+            }
             #else
-                printk(1, "debug mode not active : make debug\n");
+            printk(1, "debug mode not active : make debug\n");
             #endif
             continue;
         }
@@ -145,8 +138,8 @@ void keyboard_loop(void (*handler)(char)) {
         if (handler)
             handler(c);
         #ifdef DEBUG
-            if (scr.mode == SCR_MODE_SPLIT && (scr.screens[scr.split_r].flags & SCR_DEBUG))
-                debug_print_state(sc);
+        if (scr.mode == SCR_MODE_SPLIT && (scr.screens[scr.split_r].flags & SCR_DEBUG))
+            debug_print_state(sc);
         #endif
     }
 }
