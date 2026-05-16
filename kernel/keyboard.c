@@ -112,6 +112,11 @@ void keyboard_loop(void (*handler)(char)) {
             continue;
         }
 
+        if (ctrl_pressed && key == KEY_1) {
+            screen_toggle_split();
+            continue;
+        }
+
         #ifdef DEBUG
         if (ctrl_pressed && key == KEY_G) {
             if (scr.mode == SCR_MODE_SPLIT && (scr.screens[scr.split_r].flags & SCR_DEBUG)) {
@@ -125,10 +130,7 @@ void keyboard_loop(void (*handler)(char)) {
         }
         #endif
 
-        if (ctrl_pressed && key == KEY_1) {
-            screen_toggle_split();
-            continue;
-        }
+
 
         char c = scancode_to_ascii(sc);
         if (c == 0)

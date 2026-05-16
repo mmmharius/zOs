@@ -31,7 +31,7 @@ static void scr_exit_split(void) {
     int left = scr.split_l;
 
     scr.screens[scr.split_l].flags &= ~(SCR_SPLIT_L | SCR_RENDERED);
-    scr.screens[scr.split_r].flags &= ~(SCR_SPLIT_R | SCR_RENDERED | SCR_DEBUG);
+    scr.screens[scr.split_r].flags &= ~(SCR_SPLIT_R | SCR_RENDERED);
     scr.mode    = SCR_MODE_NORMAL;
     scr.current = left;
     scr.screens[left].flags |= SCR_RENDERED;
@@ -60,11 +60,10 @@ static void vga_draw_screen(screen_t *s, int id, int col_offset) {
         #endif
         s->row = 1;
     }
-    if (s->col == 0) {
+    if (s->col == 0 && !(s->flags & SCR_DEBUG)) {
         ft_putbuff(s->buffer, s->row, 0, "zOS > ");
         s->col = 6;
     }
-    
     for (int row = 0; row < VGA_HEIGHT; row++)
         for (int col = 0; col < width; col++) {
             vga[row * VGA_WIDTH + col + col_offset] = (uint16_t)s->buffer[row * VGA_WIDTH + col] | color;

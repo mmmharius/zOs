@@ -5,8 +5,6 @@
 #include <keyboard.h>
 #include <screen.h>
 #include <stdint.h>
-#include <io.h>
-#include <printk.h>
 
 #define DBG_HISTORY_SIZE 16
 

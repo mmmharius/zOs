@@ -15,13 +15,14 @@ PRINTK_OBJS = $(patsubst printk_zOs/src/%.c,printk_zOs/obj/%.o,$(PRINTK_SRCS))
 PRINTK      = printk_zOs/printk_zOs.a
 
 LIBC_SRCS  = libc_zOs/ft_memset.c   libc_zOs/ft_bzero.c    \
-              libc_zOs/ft_memcpy.c   libc_zOs/ft_memmove.c  \
-              libc_zOs/ft_atoi.c     libc_zOs/ft_strchr.c   \
-              libc_zOs/ft_strrchr.c  libc_zOs/ft_strncmp.c  \
-              libc_zOs/ft_strlcpy.c  libc_zOs/ft_strlcat.c  \
-              libc_zOs/ft_isalpha.c  libc_zOs/ft_isdigit.c  \
-              libc_zOs/ft_isalnum.c  libc_zOs/ft_toupper.c  \
-              libc_zOs/ft_tolower.c  libc_zOs/ft_putbuff.c
+             libc_zOs/ft_memcpy.c   libc_zOs/ft_memmove.c  \
+             libc_zOs/ft_atoi.c     libc_zOs/ft_strchr.c   \
+             libc_zOs/ft_strrchr.c  libc_zOs/ft_strncmp.c  \
+             libc_zOs/ft_strlcpy.c  libc_zOs/ft_strlcat.c  \
+             libc_zOs/ft_isalpha.c  libc_zOs/ft_isdigit.c  \
+             libc_zOs/ft_isalnum.c  libc_zOs/ft_toupper.c  \
+             libc_zOs/ft_tolower.c  libc_zOs/ft_putbuff.c
+
 LIBC_OBJS  = $(patsubst libc_zOs/%.c,libc_zOs/obj/%.o,$(LIBC_SRCS))
 LIBC       = libc_zOs/libc_zOs.a
 
