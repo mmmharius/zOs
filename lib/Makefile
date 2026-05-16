@@ -21,7 +21,7 @@ LIBC_SRCS  = libc_zOs/ft_memset.c   libc_zOs/ft_bzero.c    \
               libc_zOs/ft_strlcpy.c  libc_zOs/ft_strlcat.c  \
               libc_zOs/ft_isalpha.c  libc_zOs/ft_isdigit.c  \
               libc_zOs/ft_isalnum.c  libc_zOs/ft_toupper.c  \
-              libc_zOs/ft_tolower.c
+              libc_zOs/ft_tolower.c  libc_zOs/ft_putbuff.c
 LIBC_OBJS  = $(patsubst libc_zOs/%.c,libc_zOs/obj/%.o,$(LIBC_SRCS))
 LIBC       = libc_zOs/libc_zOs.a
 

@@ -11,7 +11,6 @@ screen_mgr_t scr;
 
 void screen_init() {
     for (int i = 0; i < MAX_SCREENS; i++) {
-        scr.screens[i].row       = 0;
         scr.screens[i].col       = 0;
         #ifdef DEBUG
             scr.screens[i].start_row = (i == 0) ? 1 : (i == DEBUG_SCREEN_ID) ? 5 : 0;

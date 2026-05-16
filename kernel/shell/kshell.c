@@ -10,7 +10,6 @@
 
 #define KSHELL_BUFSIZE  256
 #define KSHELL_MAX_ARGS 8
-#define PROMPT          "zOs> "
 
 static char buf[KSHELL_BUFSIZE];
 static int  len = 0;
@@ -79,7 +78,6 @@ static void kshell_exec(char **argv, int argc)
         debug_live_print(id, max_rows);
     }
 #endif
-
     else
         printk(0, "unknown: %s\n", argv[0]);
 }
@@ -93,7 +91,6 @@ static void kshell_handler(char c)
         char *argv[KSHELL_MAX_ARGS + 1];
         int   argc = kshell_split(buf, argv, KSHELL_MAX_ARGS);
         kshell_exec(argv, argc);
-        printk(0, PROMPT);
     } else if (c == '\b') {
         if (len > 0) {
             len--;
@@ -108,6 +105,5 @@ static void kshell_handler(char c)
 }
 
 void kshell_run(void) {
-    printk(0, PROMPT);
     keyboard_loop(kshell_handler);
 }

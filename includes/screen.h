@@ -22,7 +22,7 @@
 #define SCR_MODE_NORMAL 0
 #define SCR_MODE_SPLIT  1
 
-
+#define PROMPT          "zOs> "
 typedef struct {
     int     row;
     int     col;

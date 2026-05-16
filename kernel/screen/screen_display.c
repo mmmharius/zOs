@@ -1,8 +1,7 @@
 #include <screen.h>
 #include <color.h>
-#ifdef DEBUG
-    #include <printk.h>
-#endif
+#include <printk.h>
+#include <libc.h>
 
 static int saved_col = -1;
 
@@ -51,10 +50,25 @@ static void vga_draw_screen(screen_t *s, int id, int col_offset) {
     uint16_t color = get_screen_color(id);
     int width = (scr.mode == SCR_MODE_SPLIT) ? VGA_WIDTH / 2 : VGA_WIDTH;
 
+    if (s->row == 0) {
+        #ifdef DEBUG
+            ft_putbuff(s->buffer, 0, 0, "DEBUG MODE ON");
+        #elif CORR
+            ft_putbuff(s->buffer, 0, 0, "42");
+        #else
+            ft_putbuff(s->buffer, 0, 0, "zOS");
+        #endif
+        s->row = 1;
+    }
+    if (s->col == 0) {
+        ft_putbuff(s->buffer, s->row, 0, "zOS > ");
+        s->col = 6;
+    }
+    
     for (int row = 0; row < VGA_HEIGHT; row++)
-        for (int col = 0; col < width; col++)
-            vga[row * VGA_WIDTH + col + col_offset] =
-                (uint16_t)s->buffer[row * VGA_WIDTH + col] | color;
+        for (int col = 0; col < width; col++) {
+            vga[row * VGA_WIDTH + col + col_offset] = (uint16_t)s->buffer[row * VGA_WIDTH + col] | color;
+        }
 }
 
 void split_refresh(int left_id, int right_id) {
