@@ -43,6 +43,8 @@ define run_cmd
 endef
 
 check_submodules:
+	@printf "\n$(BLUE)Updating submodules...\n$(RESET)"
+	@git submodule update --init --recursive --remote
 	@if [ ! -e lib/printk_zOs/.git ] ||  [ ! -e lib/libasm_zOs/.git ] || [ ! -e lib/libc_zOs/.git ]; then \
 		printf "\n$(RED)$(BOLD)Submodules not found in lib/$(RESET)\n"; \
 		printf "\n$(BLUE)Initializing submodules...\n$(RESET)"; \
@@ -55,7 +57,6 @@ all: check_submodules banner kernel.bin
 banner:
 	@printf "\n$(BLUE)$(BOLD)                 zOs build system$(RESET)\n"
 	@printf "\n$(BLUE)-----------------------------------------------------\n"
-
 
 
 $(OBJ_DIR):

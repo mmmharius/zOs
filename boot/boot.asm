@@ -18,12 +18,24 @@ align 4                     ; align to 4-byte boundary (multiboot requirement)
 
 section .note.GNU-stack noalloc noexec nowrite progbits
 
+section .bss
+align 16
+bottom_stack:
+    resb 16384
+top_stack:
+
 section .text
+
+global bottom_stack
+global top_stack
 global _start               ; entry point visible to linker
 extern main                 ; extern = other file (kernel.c)
 
 _start:
     cli                     ; disable interrupts (no handlers yet)
+    stack:
+    mov esp, bottom_stack
+    xor ebp, ebp
     call main               ; jump to C code
     hlt                     ; halt CPU if main return (security)
     jmp _start              ; an infinite loop so we can see the result
