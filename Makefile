@@ -46,7 +46,7 @@ check_submodules:
 	@if [ ! -e lib/printk_zOs/.git ] ||  [ ! -e lib/libasm_zOs/.git ] || [ ! -e lib/libc_zOs/.git ]; then \
 		printf "\n$(RED)$(BOLD)Submodules not found in lib/$(RESET)\n"; \
 		printf "\n$(BLUE)Initializing submodules...\n$(RESET)"; \
-		git submodule update --init --recursive; \
+		git submodule update --init --recursive --remote; \
 	fi
 
 all: check_submodules banner kernel.bin
