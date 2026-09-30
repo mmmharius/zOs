@@ -8,9 +8,9 @@ LDFLAGS        = -m elf_i386 -T linker.ld
 OBJ_DIR        = obj
 DEBUG_OBJ_DIR  = obj/debug
 
-SRCS           = kernel/kernel.c kernel/keyboard.c kernel/shell/kshell.c \
+SRCS           = kernel/kernel.c kernel/keyboard.c kernel/gdt.c kernel/shell/kshell.c \
                  kernel/screen/screen_core.c kernel/screen/screen_display.c \
-                 kernel/screen/screen_io.c kernel/screen/screen_utils.c
+                 kernel/screen/screen_io.c kernel/screen/screen_utils.c  
 DEBUG_SRCS     = $(SRCS) kernel/debug.c
 
 OBJS           = $(patsubst %.c,$(OBJ_DIR)/%.o,$(SRCS))
