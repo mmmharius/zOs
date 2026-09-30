@@ -2,7 +2,7 @@ ASM            = nasm
 CC             = cc
 LD             = ld
 ASMFLAGS       = -f elf32
-CFLAGS         = -Wall -Wextra -Werror -m32 -fno-builtin -fno-exceptions -fno-stack-protector -nostdlib -nodefaultlibs -Iincludes/ -Ilib/printk_zOs
+CFLAGS         = -Wall -Wextra -Werror -m32 -fno-builtin -fno-exceptions -fno-stack-protector -fno-omit-frame-pointer -nostdlib -nodefaultlibs -Iincludes/ -Ilib/printk_zOs
 LDFLAGS        = -m elf_i386 -T linker.ld
 
 OBJ_DIR        = obj
@@ -42,16 +42,7 @@ define run_cmd
 	fi
 endef
 
-check_submodules:
-	@printf "\n$(BLUE)Updating submodules...\n$(RESET)"
-	@git submodule update --init --recursive --remote
-	@if [ ! -e lib/printk_zOs/.git ] ||  [ ! -e lib/libasm_zOs/.git ] || [ ! -e lib/libc_zOs/.git ]; then \
-		printf "\n$(RED)$(BOLD)Submodules not found in lib/$(RESET)\n"; \
-		printf "\n$(BLUE)Initializing submodules...\n$(RESET)"; \
-		git submodule update --init --recursive --remote; \
-	fi
-
-all: check_submodules banner kernel.bin
+all: banner kernel.bin
 	@printf "\n $(GREEN)$(BOLD)Build complete$(RESET) $(GREEN)[OK]$(RESET)\n\n"
 
 banner:
@@ -79,7 +70,7 @@ $(DEBUG_OBJ_DIR)/%.o: %.c | $(DEBUG_OBJ_DIR)
 	@mkdir -p $(dir $@)
 	$(call run_cmd,$(CC) $(CFLAGS) -c $< -o $@,cc     $<)
 
-lib_build: FORCE
+lib_build: 
 	@$(MAKE) --no-print-directory -C $(LIB_DIR)
 
 kernel.bin: $(OBJ_DIR)/boot.o $(OBJS) lib_build
@@ -93,14 +84,14 @@ run: iso
 	@printf "\n $(BLUE)$(BOLD)Booting zOs in QEMU...$(RESET)\n\n"
 	@qemu-system-i386 -cdrom zOs.iso -serial stdio
 
-corr: fclean check_submodules banner
+corr: fclean banner
 	@$(MAKE) --no-print-directory \
 		CFLAGS="$(CFLAGS) -DCORR" \
 		_build_iso
 	@printf "\n $(BLUE)$(BOLD)Booting zOs (CORR)...$(RESET)\n\n"
 	@qemu-system-i386 -cdrom zOs.iso -serial stdio
 
-debug: fclean check_submodules banner
+debug: fclean banner
 	@$(MAKE) --no-print-directory -C $(LIB_DIR) fclean
 	@$(MAKE) --no-print-directory -C $(LIB_DIR) EXTRA_CFLAGS="-DDEBUG"
 	@$(MAKE) --no-print-directory \
@@ -132,5 +123,10 @@ fclean:
 
 re: fclean all
 
-FORCE:
-.PHONY: all banner clean_banner fclean_banner corr debug iso run clean fclean re lib_build FORCE
+trace: fclean all iso
+	@qemu-system-i386 -cdrom zOs.iso -serial stdio -no-reboot -d int,cpu_reset -D qemu.log
+
+gdb: fclean	all iso
+	@qemu-system-i386 -cdrom zOs.iso -serial stdio -S -s
+
+.PHONY: all banner corr debug iso run clean fclean re lib_build trace gdb

@@ -4,6 +4,7 @@
 #include <keyboard.h>
 #include <screen.h>
 #include <printk.h>
+#include <gdt.h>
 #ifdef DEBUG
     #include <debug.h>
 #endif
