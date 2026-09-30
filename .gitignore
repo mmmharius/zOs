@@ -4,4 +4,4 @@ zOs.iso
 .vscode
 *.o
 *.a
-quemu.log
+qemu.log
