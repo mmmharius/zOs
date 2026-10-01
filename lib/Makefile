@@ -10,7 +10,7 @@ LIBASM      = libasm_zOs/libasm_zOs.a
 
 PRINTK_SRCS = printk_zOs/src/printk.c     printk_zOs/src/ft_puthex.c \
               printk_zOs/src/ft_putnbr.c  printk_zOs/src/ft_putnsigned.c \
-              printk_zOs/src/ft_putptr.c
+              printk_zOs/src/ft_putptr.c  printk_zOs/src/ft_puthex_padded.c
 PRINTK_OBJS = $(patsubst printk_zOs/src/%.c,printk_zOs/obj/%.o,$(PRINTK_SRCS))
 PRINTK      = printk_zOs/printk_zOs.a
 
@@ -72,13 +72,15 @@ $(LIBC): $(LIBC_OBJS)
 	@ar rcs $@ $(LIBC_OBJS)
 
 clean:
-	@printf "  $(BLUE)->$(RESET) %-40s $(RED)[DELETED]$(RESET)\n" \
-		"libasm_zOs/obj printk_zOs/obj libc_zOs/obj"
+	@printf "  $(BLUE)->$(RESET) %-40s $(RED)[DELETED]$(RESET)\n" "libasm_zOs/obj"
+	@printf "  $(BLUE)->$(RESET) %-40s $(RED)[DELETED]$(RESET)\n" "printk_zOs/obj"
+	@printf "  $(BLUE)->$(RESET) %-40s $(RED)[DELETED]$(RESET)\n" "libc_zOs/obj"
 	@rm -rf libasm_zOs/obj printk_zOs/obj libc_zOs/obj
 
 fclean: clean
-	@printf "  $(BLUE)->$(RESET) %-40s $(RED)[DELETED]$(RESET)\n" \
-		"$(LIBASM) $(PRINTK) $(LIBC)"
+	@printf "  $(BLUE)->$(RESET) %-40s $(RED)[DELETED]$(RESET)\n" "$(LIBASM)"
+	@printf "  $(BLUE)->$(RESET) %-40s $(RED)[DELETED]$(RESET)\n" "$(PRINTK)"
+	@printf "  $(BLUE)->$(RESET) %-40s $(RED)[DELETED]$(RESET)\n" "$(LIBC)"
 	@rm -f $(LIBASM) $(PRINTK) $(LIBC)
 
 re: fclean all
