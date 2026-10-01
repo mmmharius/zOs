@@ -16,6 +16,10 @@ DEBUG_SRCS     = $(SRCS) kernel/debug.c
 OBJS           = $(patsubst %.c,$(OBJ_DIR)/%.o,$(SRCS))
 DEBUG_OBJS     = $(patsubst %.c,$(DEBUG_OBJ_DIR)/%.o,$(DEBUG_SRCS))
 
+ASM_SRCS       = $(wildcard boot/*.asm)
+ASM_OBJS       = $(patsubst boot/%.asm,$(OBJ_DIR)/%.o,$(ASM_SRCS))
+DEBUG_ASM_OBJS = $(patsubst boot/%.asm,$(DEBUG_OBJ_DIR)/%.o,$(ASM_SRCS))
+
 LIB_DIR        = lib
 LIBASM_LIB     = $(LIB_DIR)/libasm_zOs/libasm_zOs.a
 PRINTK_LIB     = $(LIB_DIR)/printk_zOs/printk_zOs.a
@@ -46,8 +50,8 @@ all: banner kernel.bin
 	@printf "\n $(GREEN)$(BOLD)Build complete$(RESET) $(GREEN)[OK]$(RESET)\n\n"
 
 banner:
-	@printf "\n$(BLUE)$(BOLD)                 zOs build system$(RESET)\n"
-	@printf "\n$(BLUE)-----------------------------------------------------\n"
+	@printf "\n$(BLUE)$(BOLD)                zOs build system$(RESET)\n"
+	@printf "$(BLUE)--------------------------------------------------\n"
 
 
 $(OBJ_DIR):
@@ -56,10 +60,10 @@ $(OBJ_DIR):
 $(DEBUG_OBJ_DIR):
 	@mkdir -p $(DEBUG_OBJ_DIR)/kernel/screen
 
-$(OBJ_DIR)/boot.o: boot/boot.asm | $(OBJ_DIR)
+$(OBJ_DIR)/%.o: boot/%.asm | $(OBJ_DIR)
 	$(call run_cmd,$(ASM) $(ASMFLAGS) $< -o $@,asm    $<)
 
-$(DEBUG_OBJ_DIR)/boot.o: boot/boot.asm | $(DEBUG_OBJ_DIR)
+$(DEBUG_OBJ_DIR)/%.o: boot/%.asm | $(DEBUG_OBJ_DIR)
 	$(call run_cmd,$(ASM) $(ASMFLAGS) $< -o $@,asm    $<)
 
 $(OBJ_DIR)/%.o: %.c | $(OBJ_DIR)
@@ -73,8 +77,8 @@ $(DEBUG_OBJ_DIR)/%.o: %.c | $(DEBUG_OBJ_DIR)
 lib_build: 
 	@$(MAKE) --no-print-directory -C $(LIB_DIR)
 
-kernel.bin: $(OBJ_DIR)/boot.o $(OBJS) lib_build
-	$(call run_cmd,$(LD) $(LDFLAGS) -o $@ $(OBJ_DIR)/boot.o $(OBJS) $(LIBS),link   kernel.bin)
+kernel.bin: $(ASM_OBJS) $(OBJS) lib_build
+	$(call run_cmd,$(LD) $(LDFLAGS) -o $@ $(ASM_OBJS) $(OBJS) $(LIBS),link   kernel.bin)
 
 iso: kernel.bin
 	@mv kernel.bin isodir/boot/
@@ -98,6 +102,7 @@ debug: fclean banner
 		CFLAGS="$(CFLAGS) -DDEBUG" \
 		SRCS="$(DEBUG_SRCS)" \
 		OBJS="$(DEBUG_OBJS)" \
+		ASM_OBJS="$(DEBUG_ASM_OBJS)" \
 		OBJ_DIR="$(DEBUG_OBJ_DIR)" \
 		_build_iso
 	@printf "\n $(BLUE)$(BOLD)Booting zOs (DEBUG)...$(RESET)\n\n"
@@ -107,17 +112,17 @@ _build_iso: lib_build kernel.bin iso
 
 clean:
 	@printf "\n$(RED)$(BOLD)                 zOs clean system$(RESET)\n"
-	@printf "\n$(RED)-------------------------------------------------------\n"
+	@printf "\n$(RED)---------------------------------------------------\n"
 	@printf "  $(BLUE)->$(RESET) %-40s $(RED)[DELETED]$(RESET)\n" "$(CLEAN_TARGETS)"
 	@$(MAKE) --no-print-directory -C $(LIB_DIR) clean;
 	@printf "\n $(GREEN)$(BOLD)repo clean$(RESET) $(GREEN)[OK]$(RESET)\n";
 	@rm -rf $(CLEAN_TARGETS)
 
 fclean:
-	@printf "\n$(RED)$(BOLD)                 zOs fclean system$(RESET)\n\n"
-	@printf "\n$(RED)-------------------------------------------------------\n"
+	@printf "\n$(RED)$(BOLD)                 zOs fclean system$(RESET)\n"
+	@printf "$(RED)---------------------------------------------------\n"
 	@rm -rf $(FCLEAN_TARGETS)
-	@printf "  $(BLUE)->$(RESET) %-40s $(RED)[DELETED]$(RESET)\n" $(addprefix lib/,$(CLEAN_TARGETS))
+	@printf "  $(BLUE)->$(RESET) %-40s $(RED)[DELETED]$(RESET)\n" $(addprefix lib/,$(FCLEAN_TARGETS))
 	@$(MAKE) --no-print-directory -C $(LIB_DIR) fclean;
 	@printf "\n $(GREEN)$(BOLD)repo fclean$(RESET) $(GREEN)[OK]$(RESET)\n";
 

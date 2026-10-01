@@ -17,6 +17,7 @@ static void gdt_set_entry(int i, uint32_t base, uint32_t limit, uint8_t access, 
         printk(1, "%x\r\n", gdt[i].limit_low);
         printk(1, "%x\r\n", gdt[i].access);
         printk(1, "%x\r\n", gdt[i].flags_limit_high);
+        printk(SERIAL, "%p\n", 0x00100800);
     #endif
 }
 
@@ -29,4 +30,5 @@ void    gdt_init() {
     gdt_set_entry(2, 0, 0xFFFFF, 0x92, 0xC0);    // kernel data
     gdt_set_entry(3, 0, 0xFFFFF, 0xFA, 0xC0);    // user code
     gdt_set_entry(4, 0, 0xFFFFF, 0xF2, 0xC0);    // user data
+    gdt_flush(&ptr);
 }   

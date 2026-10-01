@@ -22,5 +22,6 @@ _Static_assert(sizeof(struct gdt_entry) == 8, "gdt_entry must be 8 bytes");
 _Static_assert(sizeof(struct gdt_ptr) == 6, "gdt_entry must be 6 bytes");
 
 void    gdt_init();
+void    gdt_flush(struct gdt_ptr *p);
 
 #endif
