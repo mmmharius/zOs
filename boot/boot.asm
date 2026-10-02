@@ -33,8 +33,7 @@ extern main                 ; extern = other file (kernel.c)
 
 _start:
     cli                     ; disable interrupts (no handlers yet)
-    stack:
-    mov esp, bottom_stack
+    mov esp, top_stack
     xor ebp, ebp
     call main               ; jump to C code
     hlt                     ; halt CPU if main return (security)
