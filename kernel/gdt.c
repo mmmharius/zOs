@@ -32,3 +32,7 @@ void    gdt_init() {
     gdt_set_entry(4, 0, 0xFFFFF, 0xF2, 0xC0);    // user data
     gdt_flush(&ptr);
 }   
+
+void    gdt_print() {
+    printk(SERIAL, "salut gdt");
+}

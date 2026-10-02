@@ -16,7 +16,7 @@ void screen_init() {
             scr.screens[i].start_row = (i == 0) ? 1 : (i == DEBUG_SCREEN_ID) ? 5 : 0;
             scr.screens[i].flags = SCR_ACTIVE | (i == DEBUG_SCREEN_ID ? SCR_DEBUG : 0);
         #else
-            scr.screens[i].start_row = (i == 0) ? 5 : 0;
+            scr.screens[i].start_row = 0;
             scr.screens[i].flags = SCR_ACTIVE;
         #endif
         ft_memset(scr.screens[i].buffer, ' ', VGA_WIDTH * VGA_HEIGHT);

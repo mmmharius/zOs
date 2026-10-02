@@ -3,6 +3,7 @@
 #include <stdint.h>
 #include <printk.h>
 #include <libc.h>
+#include <gdt.h>
 #include "kshell.h"
 #ifdef DEBUG
     #include <debug.h>
@@ -70,6 +71,8 @@ static void kshell_exec(char **argv, int argc)
 
     else if (ft_strcmp(argv[0], "go") == 0 || ft_strcmp(argv[0], "exit") == 0)
         screen_close_split();
+    else if (ft_strcmp(argv[0], "gdt") == 0)
+        gdt_print();
 
 #ifdef DEBUG
     else if (ft_strcmp(argv[0], "print") == 0) {
