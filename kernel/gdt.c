@@ -34,3 +34,9 @@ void    gdt_print() {
         printk(VGA, "gdt[%d] : base: %x limit: %x acces: %x\n", i, base, limit, access);
     }
 }
+
+uint32_t get_esp(void) {
+    uint32_t esp;
+    asm volatile("mov %%esp, %0" : "=r"(esp));
+    return esp;
+}

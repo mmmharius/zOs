@@ -4,6 +4,7 @@
 #include <printk.h>
 #include <libc.h>
 #include <gdt.h>
+#include <stack.h>
 #include "kshell.h"
 #ifdef DEBUG
     #include <debug.h>
@@ -68,7 +69,8 @@ static void kshell_exec(char **argv, int argc)
 
     else if (ft_strcmp(argv[0], "reboot") == 0)
         outb(0x64, 0xFE);
-
+    else if (ft_strcmp(argv[0], "stack") == 0)
+        stack_dump(16);
     else if (ft_strcmp(argv[0], "go") == 0 || ft_strcmp(argv[0], "exit") == 0)
         screen_close_split();
     else if (ft_strcmp(argv[0], "gdt") == 0)
