@@ -15,5 +15,7 @@ gdt_flush:
     mov es, ax
     mov fs, ax
     mov gs, ax
+
+    mov ax, 0x18 ; index 3 , 3*8 = 24 = 0x18
     mov ss, ax
     ret

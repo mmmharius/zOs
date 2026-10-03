@@ -9,16 +9,6 @@ static void gdt_set_entry(int i, uint32_t base, uint32_t limit, uint8_t access, 
     gdt[i].limit_low = limit & 0xFFFF;
     gdt[i].access = access;
     gdt[i].flags_limit_high = (flags & 0xF0) | ((limit >> 16) & 0x0F);
-
-    #ifdef DEBUG
-        printk(1, "%x\r\n", gdt[i].base_high);
-        printk(1, "%x\r\n", gdt[i].base_mid);
-        printk(1, "%x\r\n", gdt[i].base_low);
-        printk(1, "%x\r\n", gdt[i].limit_low);
-        printk(1, "%x\r\n", gdt[i].access);
-        printk(1, "%x\r\n", gdt[i].flags_limit_high);
-        printk(SERIAL, "%p\n", 0x00100800);
-    #endif
 }
 
 void    gdt_init() {
@@ -28,11 +18,19 @@ void    gdt_init() {
     gdt_set_entry(0, 0, 0xFFFFF, 0, 0);    // null descriptor
     gdt_set_entry(1, 0, 0xFFFFF, 0x9A, 0xC0);    // kernel code
     gdt_set_entry(2, 0, 0xFFFFF, 0x92, 0xC0);    // kernel data
-    gdt_set_entry(3, 0, 0xFFFFF, 0xFA, 0xC0);    // user code
-    gdt_set_entry(4, 0, 0xFFFFF, 0xF2, 0xC0);    // user data
+    gdt_set_entry(3, 0, 0xFFFFF, 0x92, 0xC0);    // kernel stack
+    gdt_set_entry(4, 0, 0xFFFFF, 0xFA, 0xC0);    // user code
+    gdt_set_entry(5, 0, 0xFFFFF, 0xF2, 0xC0);    // user data
+    gdt_set_entry(6, 0, 0xFFFFF, 0xF2, 0xC0);    // user stack
     gdt_flush(&ptr);
 }   
 
 void    gdt_print() {
-    printk(SERIAL, "salut gdt");
+    gdt_entry *gdt = (gdt_entry *)GDT_ADDR;
+    for (int i = 0; i < GDT_ENTRIES; i++) {
+        uint32_t base = (gdt[i].base_high << 24) | (gdt[i].base_mid << 16) | gdt[i].base_low;
+        uint32_t limit  = gdt[i].limit_low | ((gdt[i].flags_limit_high & 0x0F) << 16);
+        uint8_t  access = gdt[i].access;
+        printk(VGA, "gdt[%d] : base: %x limit: %x acces: %x\n", i, base, limit, access);
+    }
 }
